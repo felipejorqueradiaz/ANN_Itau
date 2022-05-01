@@ -6,6 +6,9 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import classification_report, confusion_matrix
 
+
+#Crear variable a predecir!
+
 #%% Carga de Datos
 datos= pd.read_pickle('Datos/intermedia/union.pkl', compression= 'bz2')
 display(datos.sample(15))
