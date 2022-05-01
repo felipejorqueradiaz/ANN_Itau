@@ -1,12 +1,18 @@
 import os 
 import pandas as pd
+import pickle
+import 
 
 #%% Carga de dataset
 path='C:/Users/Asus/Documents/GitHub/ANN_Itau'
 
 os.chdir(path)
 
-transacciones=pd.read_csv('Datos/intermedia/transacciones_v1.csv')
+# transacciones_previa.to_pickle('Datos/intermedia/transacciones.pkl', compression= 'bz2')
+
+transacciones = pd.read_pickle('Datos/intermedia/transacciones.pkl', compression= 'bz2')
+
+
 campanas=pd.read_csv('Datos/intermedia/campañas.csv')
 # Suceptiblilidad 
 # Delay a 3 meses
@@ -25,10 +31,7 @@ union=pd.merge(transacciones,campanas, on=['id', 'Id_Producto', 'Tipo', 'Product
 display(union)
 display(union.columns)
 
-
-# 'id', 'Id_Producto', 'Tipo','Producto-Tipo', 'Canal', 'Periodo','dataset'
-
-# 'id', 'Id_Producto', 'Tipo', 'Producto-Tipo','dataset', 'Periodo'
+union.to_pickle('Datos/intermedia/union.pkl', compression= 'bz2')
 #%%
 
 datasample=union.iloc[:800,]

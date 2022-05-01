@@ -168,4 +168,12 @@ for filename in periodos:
     else:
         df=pd.concat([df, new_data[f"P_{filename}"]], ignore_index=True)
 
-df.to_csv('Datos/transacciones_v1.csv',index=False)
+
+
+
+df.to_pickle('Datos/intermedia/transacciones.pkl', compression= 'zip')
+
+#df.to_csv('Datos/transacciones_v1.csv',index=False)
+
+#%%
+

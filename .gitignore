@@ -3,3 +3,4 @@ files/input/Transaccion_test.csv
 files/input/Transaccion_train.csv
 *.csv
 files/input/Diccionario.xlsx
+*.plk
