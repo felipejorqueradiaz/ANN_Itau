@@ -8,8 +8,9 @@ os.chdir(path)
 
 transacciones=pd.read_csv('Datos/intermedia/transacciones_v1.csv')
 campanas=pd.read_csv('Datos/intermedia/campañas.csv')
-
-
+# Suceptiblilidad 
+# Delay a 3 meses
+# Correr código en comunicaciones 
 
 
 
