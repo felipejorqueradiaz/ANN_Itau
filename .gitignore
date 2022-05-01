@@ -4,5 +4,5 @@ files/input/Transaccion_train.csv
 *.csv
 files/input/Diccionario.xlsx
 
-files/input/union.plk
+files/input/union.pkl
 *.plk
