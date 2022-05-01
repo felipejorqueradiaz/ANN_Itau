@@ -93,4 +93,6 @@ df.loc[df['Periodo']>=202008, 'dataset'] = 'test'
 df.loc[df['Periodo']<202008, 'dataset'] = 'train'
 
 #%% 9
-df.to_csv('Datos/intermedia/campañas.csv', index=False)
+# df.to_csv('Datos/intermedia/campañas.csv', index=False)
+
+df.to_pickle('Datos/intermedia/campañas.pkl', compression= 'zip')

@@ -31,10 +31,10 @@ union=pd.merge(transacciones,campanas, on=['id', 'Id_Producto', 'Tipo', 'Product
 display(union)
 display(union.columns)
 
-union.to_pickle('Datos/intermedia/union.pkl', compression= 'bz2')
+
 #%%
 
-datasample=union.iloc[:800,]
+union.to_pickle('Datos/intermedia/union.pkl', compression= 'bz2')
 
 #%%
 
