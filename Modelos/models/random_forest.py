@@ -16,9 +16,15 @@ winsound.Beep(1000,1000)
 #%% Dividir datos
 
 
-X_train, X_test, y_train, y_test = train_test_split(
-    features, labels, test_size=0.33, shuffle=True, stratify=labels
-)
+X = df['']
+
+y= df[~msk]
+
+# X_train, X_test, y_train, y_test = train_test_split(
+#     features, labels, test_size=0.33, shuffle=True, stratify=labels
+# )
+
+#%% Clasificador
 
 rf=RandomForestClassifier()
 DecisionTreeClassifier().get_params()
