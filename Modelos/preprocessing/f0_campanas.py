@@ -1,11 +1,14 @@
 import pandas as pd
 import numpy as np
 import os
-from itertools import chain
+
 
 #%% Carga de Datos
 print(os.getcwd())
 #path = 'C:\Users\Felipe\Documents\Github\ANN_Itau'
+path='C:/Users/Asus/Documents/GitHub/ANN_Itau'
+
+os.chdir(path)
 
 df_train = pd.read_csv('Datos/raw/Campanas_train.csv',
                        index_col=0)
@@ -72,22 +75,22 @@ df2 = (df.set_index('Date')
 df = pd.merge(df2, df, how="outer", on=['id', 'Id_Producto', 'Tipo', 'Producto-Tipo', 'Canal', "Date"])
 del df2
 
-#%%
+#%% 5
 df['Periodo'] = pd.to_datetime(df["Date"]).dt.strftime("%Y%m")
 df.rename(columns={"tiene_camp_x": 'tiene_camp'}, inplace=True)
 df.drop(['tiene_camp_y', 'Date'], axis=1, inplace=True)
 
-#%%
+#%% 6
 df.sort_values(by=['id', 'Producto-Tipo', 'Periodo', 'Canal'], inplace=True)
 df.reset_index(drop=True, inplace=True)
 
 df['camp_hist'] = df.groupby(['id', 'Producto-Tipo'])['tiene_camp'].transform(pd.Series.cumsum)
 
-#%%
+#%% 7
 df['Periodo'] = df.Periodo.astype(int)
-#%%
+#%% 8
 df.loc[df['Periodo']>=202008, 'dataset'] = 'test'
 df.loc[df['Periodo']<202008, 'dataset'] = 'train'
 
-#%%
+#%% 9
 df.to_csv('Datos/intermedia/campañas.csv', index=False)
