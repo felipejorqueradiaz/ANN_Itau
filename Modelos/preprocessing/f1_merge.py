@@ -1,7 +1,6 @@
 import os 
 import pandas as pd
 import pickle
-import 
 
 #%% Carga de dataset
 path='C:/Users/Asus/Documents/GitHub/ANN_Itau'
