@@ -3,13 +3,19 @@ import numpy as np
 import os
 
 
+#%%
+
+playsound('C:/Users/Felipe/Documents/Github/ANN_Itau/Modelos/functions/Kids_Cheering.mp3')
+
 #%% Carga de Datos
 print(os.getcwd())
 #path = 'C:\Users\Felipe\Documents\Github\ANN_Itau'
-path='C:/Users/Asus/Documents/GitHub/ANN_Itau'
+#path='C:/Users/Asus/Documents/GitHub/ANN_Itau'
 
-os.chdir(path)
+#os.chdir(path)
 
+from Modelos.functions.utils import bipbop
+#%%
 df_train = pd.read_csv('Datos/raw/Campanas_train.csv',
                        index_col=0)
 df_train['dataset'] = 'train'
@@ -24,6 +30,7 @@ df.drop('Fecha_Campaña', axis=1, inplace=True)
 del df_train
 del df_test
 
+bipbop()
 #%%
 
 #Buscamos aquellas personas con campaña y mayor a 1 mes
