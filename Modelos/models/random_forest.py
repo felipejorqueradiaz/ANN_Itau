@@ -1,3 +1,4 @@
+#%% Importar librerias
 import pandas as pd
 import numpy as np
 import winsound
@@ -5,23 +6,29 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import classification_report, confusion_matrix
+import os
 
-
+os.chdir('C:/Users/Asus/Documents/GitHub/ANN_Itau')
 #Crear variable a predecir!
 
 #%% Carga de Datos
+
 datos= pd.read_pickle('Datos/intermedia/union.pkl', compression= 'bz2')
 display(datos.sample(15))
 #Sacar el train no ms
 df=datos[datos.dataset=='train']
 
 winsound.Beep(1000,1000)
+#%%
+datitos=data.head(50)
+print(datitos)
+
 #%% Dividir datos
 
 
-X = df['']
+X = datos[~Variable]
 
-y= df[~msk]
+y= datos['Variable']
 
 # X_train, X_test, y_train, y_test = train_test_split(
 #     features, labels, test_size=0.33, shuffle=True, stratify=labels
