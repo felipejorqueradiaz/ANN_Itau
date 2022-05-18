@@ -20,9 +20,12 @@ df=datos[datos.dataset=='train']
 
 winsound.Beep(1000,1000)
 #%%
-datitos=data.head(50)
+# datitos=datos.head(50)
+datitos=datos[datos['id']==2]
 print(datitos)
 
+#%% Dividir datos
+datitos=datos[datos['id']==50]
 #%% Dividir datos
 
 
