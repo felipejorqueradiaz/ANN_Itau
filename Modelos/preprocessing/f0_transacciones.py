@@ -62,11 +62,7 @@ for i in list(data.keys()):
     definir_tipos(data[i])
 ncol=data['P_201906'].shape[1]
 print(f'El dataset tiene {sum(dim.values())} filas y {ncol} columnas')
-#%%
-datita=data['P_201906'].sample(5)
-del datita
-del i
-del ncol
+
 
 #%% Añadimos variables de transacciones por id y producto, de transacciones de id por periodo,
 # y 
@@ -98,6 +94,7 @@ for i in data_enumerate.keys():
     else: #Igual creamos la columna pero vacía 
         new_data[f"P_{data_enumerate[i]}"]['P PT i-1']=np.nan
 
+
 #%%
 
 #Variable numerica de cuantas transacciones realizó en periodo anterior
@@ -109,17 +106,19 @@ def lag_n_ntrans(j):
     '''
     for i in data_enumerate.keys(): #Variable numerica de cuantas transacciones realizó en periodo anterior
         if i>=(j+1):
-            cuenta=data[f"P_{data_enumerate[i-j]}"].groupby(['id-producto'])['Monto'].count().to_frame() #Contar las transacciones periodo anterior de la persona y producto
-            cuenta['id-producto'] = cuenta.index #indice a columna para hacer merge
+            cuenta=data[f"P_{data_enumerate[i-j]}"].groupby(['id-producto-tipo'])['Monto'].count().to_frame() #Contar las transacciones periodo anterior de la persona y producto
+            cuenta['id-producto-tipo'] = cuenta.index #indice a columna para hacer merge
             cuenta.index.names = ['index'] #le cambiamos el nombre
             cuenta=cuenta.rename(columns={'Monto': f't_i-{j}'})#transacciones anteriores
-            new_data[f"P_{data_enumerate[i]}"]=pd.merge(new_data[f"P_{data_enumerate[i]}"],cuenta,on='id-producto',how='left')#N° transacciones mes anterior
+            new_data[f"P_{data_enumerate[i]}"]=pd.merge(new_data[f"P_{data_enumerate[i]}"],cuenta,on='id-producto-tipo',how='left')#N° transacciones mes anterior
         else:
             new_data[f"P_{data_enumerate[i]}"][f't_i-{j}']=np.nan #Igualmente creamos columna, pero vacía para periodos menores a j
             
 lag_n_ntrans(1) #1 mes antes
 lag_n_ntrans(2) #2 meses antes
 lag_n_ntrans(3) #3 meses antes
+
+
 #%%  Pasamos ese aumento en transacciones a cambio porcentual
 def cambio_porcentual_ntrans(j):
     '''
@@ -140,26 +139,27 @@ cambio_porcentual_ntrans(2)
 new_data['P_201901']['Tenia Producto']=np.nan
 
 i=2
-tenia=new_data[f"P_{data_enumerate[i-1]}"].groupby(['id-producto'])['Monto'].count().to_frame() #Todos los id que estaban en el periodo pasado
+tenia=new_data[f"P_{data_enumerate[i-1]}"].groupby(['id-producto-tipo'])['Monto'].count().to_frame() #Todos los id que estaban en el periodo pasado
 tenia['Monto']=1
-tenia['id-producto'] = tenia.index #indice a columna para hacer merge
+tenia['id-producto-tipo'] = tenia.index #indice a columna para hacer merge
 tenia.index.names = ['index'] #le cambiamos el nombre
 tenia=tenia.rename(columns={'Monto': 'Tenia Producto'})#transacciones anteriores
-new_data[f"P_{data_enumerate[i]}"]=pd.merge(new_data[f"P_{data_enumerate[i]}"],tenia,on='id-producto',how='left')#N° transacciones mes anterior
+new_data[f"P_{data_enumerate[i]}"]=pd.merge(new_data[f"P_{data_enumerate[i]}"],tenia,on='id-producto-tipo',how='left')#N° transacciones mes anterior
 
 #Generalizamos
 
 for i in data_enumerate.keys(): 
     if i>=3:
-        tenia2=new_data[f"P_{data_enumerate[i-1]}"].groupby(['id-producto'])['Monto'].count().to_frame() #Todos los id que estaban en el periodo pasado
+        tenia2=new_data[f"P_{data_enumerate[i-1]}"].groupby(['id-producto-tipo'])['Monto'].count().to_frame() #Todos los id que estaban en el periodo pasado
         tenia2['Monto']=1
-        tenia2['id-producto'] = tenia2.index #indice a columna para hacer merge
+        tenia2['id-producto-tipo'] = tenia2.index #indice a columna para hacer merge
         tenia2.index.names = ['index'] #le cambiamos el nombre
         tenia2=tenia2.rename(columns={'Monto': 'Tenia Producto'})#transacciones anteriores
-        tenia_diff = tenia2[~tenia2['id-producto'].isin(tenia['id-producto'])]
+        tenia_diff = tenia2[~tenia2['id-producto-tipo'].isin(tenia['id-producto-tipo'])]
         tenia = pd.concat([tenia, tenia_diff])
-        new_data[f"P_{data_enumerate[i]}"]=pd.merge(new_data[f"P_{data_enumerate[i]}"],tenia,on='id-producto',how='left')#N° transacciones mes anterior
+        new_data[f"P_{data_enumerate[i]}"]=pd.merge(new_data[f"P_{data_enumerate[i]}"],tenia,on='id-producto-tipo',how='left')#N° transacciones mes anterior
         
+ 
         
 #%% Signo a numero
 for i in data_enumerate.keys(): 
@@ -173,8 +173,6 @@ for filename in periodos:
         print('se lo saltó')
     else:
         df=pd.concat([df, new_data[f"P_{filename}"]], ignore_index=True)
-
-
 
 
 df.to_pickle('Datos/intermedia/transacciones.pkl', compression= 'zip')
