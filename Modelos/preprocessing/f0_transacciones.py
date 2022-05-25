@@ -23,6 +23,8 @@ df_train['dataset'] = 'train'
 df_test = pd.read_csv('Datos/raw/Transaccion_test.csv', index_col=0) #Hacer un acumulativo de montos o trANSSACCIONES
 df_test['dataset'] = 'test'
 
+del df_train
+del df_test 
 df = pd.concat([df_train, df_test], ignore_index=True)
 
 df = df.sort_values(['id', 'Periodo'],ascending = [True, True])

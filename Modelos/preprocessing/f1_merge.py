@@ -9,13 +9,13 @@ os.chdir(path)
 
 # transacciones_previa.to_pickle('Datos/intermedia/transacciones.pkl', compression= 'bz2')
 
-transacciones = pd.read_pickle('Datos/intermedia/transacciones.pkl', compression= 'bz2')
+transacciones= pd.read_pickle('Datos/intermedia/union.pkl', compression= 'bz2')
 
 
 campanas=pd.read_csv('Datos/intermedia/campañas.csv')
-# Suceptiblilidad 
-# Delay a 3 meses
-# Correr código en comunicaciones 
+# 
+
+comunicaciones=pd.read_csv('Datos/intermedia/campañas.csv')
 
 
 
