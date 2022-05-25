@@ -22,12 +22,18 @@ df = pd.concat([df_train, df_test], ignore_index=True)
 df = df.sort_values(['id', 'Periodo'],ascending = [True, True])
 df.Periodo = df.Periodo.astype('object') #Lo pasamos a str
 
-#%% Acumulado campañas
+del df_train
+del df_test
+#%% Acumulado comunicaciones
 a=df.sample(30)
 df['id-producto-tipo']=df['id'].astype(str)+"-"+df['Producto-Tipo']
 cuenta=df.groupby(['id-producto-tipo'])['dataset'].count().to_frame() #Contar las transacciones
 
-#%% Acumulado campañas con lect
+#%% Acumulado comunicaciones con lect
 
-del df_train
-del df_test
+
+
+#%%
+df.to_pickle('Datos/intermedia/comunicaciones.pkl', compression= 'zip')
+
+
