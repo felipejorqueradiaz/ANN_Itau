@@ -15,26 +15,27 @@ transacciones= pd.read_pickle('Datos/intermedia/union.pkl', compression= 'bz2')
 campanas=pd.read_csv('Datos/intermedia/campañas.csv')
 # 
 
-comunicaciones=pd.read_csv('Datos/intermedia/campañas.csv')
+comunicaciones=pd.read_csv('Datos/intermedia/comunicaciones.plk', compression= 'bz2')
 
 
 
 #%%
 
-display(transacciones.columns)
-display(campanas.head(3))
+output <- summary(transacciones)
+print(output)
+
+#%% Merge
+
+u1=pd.merge(transacciones,campanas, on=['id', 'Id_Producto', 'Tipo', 'Producto-Tipo','dataset', 'Periodo'],how='left')
+u2=pd.merge(u1,comunicaciones, on=['id', 'Id_Producto', 'Tipo', 'Producto-Tipo','dataset', 'Periodo'],how='left')
+
 
 #%%
 
-union=pd.merge(transacciones,campanas, on=['id', 'Id_Producto', 'Tipo', 'Producto-Tipo','dataset', 'Periodo'],how='left')
-display(union)
-display(union.columns)
-
+u2.to_pickle('Datos/intermedia/union.pkl', compression= 'bz2')
 
 #%%
 
-union.to_pickle('Datos/intermedia/union.pkl', compression= 'bz2')
-
-#%%
+a=transacciones.sample(100)
 
 
