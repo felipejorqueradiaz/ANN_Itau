@@ -18,7 +18,6 @@ display(datos.sample(15))
 #Sacar el train no ms
 df=datos[datos.dataset=='train']
 
-winsound.Beep(1000,1000)
 #%%
 # datitos=datos.head(50)
 datitos=datos[datos['id']==2]
