@@ -18,15 +18,15 @@ print('desp:',os.getcwd())#os.listdir()
 #%% OBTENER DATASET ORIGINAL, MEZLCAMOS TRAIN Y TEST
 #Para crear los .csv
 df_train = pd.read_csv('Datos/raw/Transaccion_train.csv', index_col=0) #Hacer un acumulativo de montos o trANSSACCIONES
-df_train['dataset'] = 'train'
+
 
 df_test = pd.read_csv('Datos/raw/Transaccion_test.csv', index_col=0) #Hacer un acumulativo de montos o trANSSACCIONES
-df_test['dataset'] = 'test'
 
+
+
+df = pd.concat([df_train, df_test], ignore_index=True)
 del df_train
 del df_test 
-df = pd.concat([df_train, df_test], ignore_index=True)
-
 df = df.sort_values(['id', 'Periodo'],ascending = [True, True])
 df.Periodo = df.Periodo.astype('object') #Lo pasamos a str
 
@@ -42,8 +42,7 @@ for x in df.Periodo.unique():
     #print(f"df_Periodo{x}",globals()[f"df_Periodo{x}"].describe())
     data[f"P_{x}"].to_csv('Datos/raw/transaction_subset/'+f"P_{x}"+'.csv',index=False)
 del df #Las borramos pq son cuaticas
-del df_train
-del df_test
+
 
 # data = {}# Para leer los .csv
 # size={}
@@ -95,6 +94,11 @@ for i in data_enumerate.keys():
         new_data[f"P_{data_enumerate[i]}"]['P PT i-1']=new_data[f"P_{data_enumerate[i-1]}"]['t_i-0']/new_data[f"P_{data_enumerate[i-1]}"]['TotalTMes']
     else: #Igual creamos la columna pero vacía 
         new_data[f"P_{data_enumerate[i]}"]['P PT i-1']=np.nan
+    #Y  la probabilidad que tenía el periodo anterior a ese (i-2)
+    if i>=3:    
+        new_data[f"P_{data_enumerate[i]}"]['P PT i-2']=new_data[f"P_{data_enumerate[i-2]}"]['t_i-0']/new_data[f"P_{data_enumerate[i-2]}"]['TotalTMes']
+    else: #Igual creamos la columna pero vacía 
+        new_data[f"P_{data_enumerate[i]}"]['P PT i-2']=np.nan
 
 
 #%%
@@ -175,11 +179,14 @@ for filename in periodos:
         print('se lo saltó')
     else:
         df=pd.concat([df, new_data[f"P_{filename}"]], ignore_index=True)
+        
+del df["dataset"]
+del df["id-producto-tipo"]
 
 
-df.to_pickle('Datos/intermedia/transacciones.pkl', compression= 'zip')
+df.to_pickle('Datos/intermedia/transacciones.pkl', compression= 'bz2')
 
-#df.to_csv('Datos/transacciones_v1.csv',index=False)
+
 
 #%%
 
