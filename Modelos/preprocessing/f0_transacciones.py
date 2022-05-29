@@ -4,6 +4,7 @@ import os
 import shutil
 
 
+
 periodos=[201901, 201902, 201903, 201904, 201905, 201906, 201907,201908, 201909, 201910, 201911, 201912,
           202001, 202002, 202003,202004, 202005, 202006, 202007,202008, 202009, 202010, 202011] #Para iterar
 
@@ -14,6 +15,7 @@ p = os.path.abspath(os.path.join(os.getcwd(), os.pardir))
 path='C:/Users/Asus/Documents/GitHub/ANN_Itau/'
 os.chdir(path)
 print('desp:',os.getcwd())#os.listdir()
+from Modelos.functions.utils import bipbop
 
 #%% OBTENER DATASET ORIGINAL, MEZLCAMOS TRAIN Y TEST
 #Para crear los .csv
@@ -89,14 +91,31 @@ for i in data_enumerate.keys():
     # Lo pasamos a probabilidades, es decir, dividimos t_0 (transacciones del mes actual) en las transacciones totales
     #Tenemos esta probabilidad en el periodo actual
     new_data[f"P_{data_enumerate[i]}"]['P PT']=new_data[f"P_{data_enumerate[i]}"]['t_i-0']/new_data[f"P_{data_enumerate[i]}"]['TotalTMes']
+    
+    
+    
+    
     #Y ponemos la probabilidad que tenía el periodo anterior
-    if i>=2:    
-        new_data[f"P_{data_enumerate[i]}"]['P PT i-1']=new_data[f"P_{data_enumerate[i-1]}"]['t_i-0']/new_data[f"P_{data_enumerate[i-1]}"]['TotalTMes']
+    if i>=2: 
+        pp=new_data[f"P_{data_enumerate[i-1]}"].groupby(['id-producto-tipo'])['P PT'].mean().to_frame() #Todos los id que estaban en el periodo pasado
+        pp['id-producto-tipo'] = pp.index #indice a columna para hacer merge
+        pp.index.names = ['index'] #le cambiamos el nombre
+        pp=pp.rename(columns={'P PT': 'P PT i-1'})#probabilidades anteriores
+        new_data[f"P_{data_enumerate[i]}"]=pd.merge(new_data[f"P_{data_enumerate[i]}"],pp,on='id-producto-tipo',how='left')#Probabilidades mes anterior
     else: #Igual creamos la columna pero vacía 
         new_data[f"P_{data_enumerate[i]}"]['P PT i-1']=np.nan
+        
+        
+        
+        
     #Y  la probabilidad que tenía el periodo anterior a ese (i-2)
-    if i>=3:    
-        new_data[f"P_{data_enumerate[i]}"]['P PT i-2']=new_data[f"P_{data_enumerate[i-2]}"]['t_i-0']/new_data[f"P_{data_enumerate[i-2]}"]['TotalTMes']
+    if i>=3:   
+        pp=new_data[f"P_{data_enumerate[i-2]}"].groupby(['id-producto-tipo'])['P PT'].mean().to_frame() #Todos los id que estaban en el periodo pasado
+        pp['id-producto-tipo'] = pp.index #indice a columna para hacer merge
+        pp.index.names = ['index'] #le cambiamos el nombre
+        pp=pp.rename(columns={'P PT': 'P PT i-2'})#probabilidades anteriores
+        new_data[f"P_{data_enumerate[i]}"]=pd.merge(new_data[f"P_{data_enumerate[i]}"],pp,on='id-producto-tipo',how='left')#Probabilidades mes anterior al anterior
+
     else: #Igual creamos la columna pero vacía 
         new_data[f"P_{data_enumerate[i]}"]['P PT i-2']=np.nan
 
@@ -182,11 +201,57 @@ for filename in periodos:
         
 del df["dataset"]
 del df["id-producto-tipo"]
-
-
-df.to_pickle('Datos/intermedia/transacciones.pkl', compression= 'bz2')
-
-
+#quitar otros productos...
 
 #%%
+# A-A, B-B, tC-D, D-E, E-E.
+AA=df[df['Producto-Tipo']=='A-A']
+BB=df[df['Producto-Tipo']=='B-B']
+CD=df[df['Producto-Tipo']=='C-D']
+DE=df[df['Producto-Tipo']=='D-E']
+EE=df[df['Producto-Tipo']=='E-E']
 
+
+
+ids= df['id'].unique()
+periodos=df['Periodo'].unique()
+
+b1= pd.DataFrame({'id': np.repeat(ids,len(periodos)), 
+                   'Periodo': np.tile(periodos,len(ids))})
+
+
+df.to_pickle('Datos/intermedia/transacciones.pkl', compression= 'zip')
+
+bipbop()
+
+#%%
+dfcito=new_data["P_201901"].head(100)
+
+#%%
+# import copy
+# new_data2=copy.deepcopy(new_data)
+
+
+# a=new_data2['P_202001'][new_data2['P_202001']['id']==30]
+# b=new_data2['P_202002'][new_data2['P_202002']['id']==30]
+
+
+# #obtenemos las probabilidades
+# pp=new_data2['P_202001'].groupby(['id-producto-tipo'])['P PT'].mean().to_frame() #Todos los id que estaban en el periodo pasado
+# #%%
+
+# # pp['pp']=1
+# pp['id-producto-tipo'] = pp.index #indice a columna para hacer merge
+# pp.index.names = ['index'] #le cambiamos el nombre
+# pp=pp.rename(columns={'P PT': 'P PT i-1'})#probabilidades anteriores
+
+# print(pp)
+# bipbop()
+# #%%
+
+# new_data2["P_202002"]=pd.merge(new_data2['P_202002'],pp,on='id-producto-tipo',how='left')#N° transacciones mes anterior
+# #%%
+# jaja=new_data2['P_202001'][new_data2['P_202001']['id']==30]
+# jaja2=new_data2['P_202002'][new_data2['P_202002']['id']==30]
+
+# bipbop()
