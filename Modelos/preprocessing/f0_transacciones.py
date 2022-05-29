@@ -204,6 +204,8 @@ for filename in periodos:
         
 del df["id-producto-tipo"]
 df.to_pickle('Datos/intermedia/transacciones.pkl', compression= 'zip')
+#%%
+print(df['Producto-Tipo'].value_counts())
 
 #%% Creación de target y separación por tipo de producto
 
