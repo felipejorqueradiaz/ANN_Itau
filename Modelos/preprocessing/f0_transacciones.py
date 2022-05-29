@@ -17,8 +17,6 @@ os.chdir(path)
 print('desp:',os.getcwd())#os.listdir()
 from Modelos.functions.utils import bipbop
 
-#%%
-dft=df.head()
 
 #%% OBTENER DATASET ORIGINAL, MEZLCAMOS TRAIN Y TEST
 #Para crear los .csv
@@ -62,7 +60,6 @@ del df #Las borramos pq son cuaticas
 def definir_tipos(dataset):    
     dataset.id = dataset.id.astype('object') #Lo pasamos a str
     dataset.Signo = dataset.Signo.astype('object') #tb
-    dataset.loc[:, 'Fecha'] =pd.to_datetime(dataset.Fecha) #A fecha
     dataset.Periodo = dataset.Periodo.astype('object') #Lo pasamos a str
 
 dim={}
@@ -208,14 +205,7 @@ for filename in periodos:
 del df["id-producto-tipo"]
 df.to_pickle('Datos/intermedia/transacciones.pkl', compression= 'zip')
 
-#%%
-
-# filtro=df[df['Producto-Tipo'].isin(['A-A','B-B','C-D','D-E','E-E'])]
-AA=df[df['Producto-Tipo']=='A-A']
-# BB=df[df['Producto-Tipo']=='B-B']                              
-# CD=df[df['Producto-Tipo']=='C-D'] 
-# DE=df[df['Producto-Tipo']=='D-E'] 
-# EE=df[df['Producto-Tipo']=='E-E'] 
+#%% Creación de target y separación por tipo de producto
 
 ids= df['id'].unique()
 periodos=df['Periodo'].unique()
@@ -223,49 +213,41 @@ periodos=df['Periodo'].unique()
 b1= pd.DataFrame({'id': np.repeat(ids,len(periodos)), 
                    'Periodo': np.tile(periodos,len(ids))})
 
+
+# filtro=df[df['Producto-Tipo'].isin(['A-A','B-B','C-D','D-E','E-E'])]
+A=df[df['Producto-Tipo']=='A-A']
+#Quitamos duplicados sumando montos
+AA=A.groupby(['id', 'Periodo'], as_index=False).agg({'Producto-Tipo': 'first', 'Signo': 'first', 'Monto': 'sum', 't_i-0': 'first','TotalTMes': 'first',
+       'P PT': 'first', 'P PT i-1': 'first', 'P PT i-2': 'first', 't_i-1': 'first', 't_i-2': 'first', 't_i-3': 'first',
+       'delta0': 'first', 'delta1': 'first', 'delta2': 'first'})
+
 df_AA=pd.merge(b1,AA,on=['id','Periodo'],how='left')#N° transacciones mes anterior
 df_AA.to_pickle('Datos/intermedia/base_tAA.pkl', compression= 'zip')
 
-# df_BB
-# df_CD
-# df_DE
-# df_EE
+B=df[df['Producto-Tipo']=='B-B']   
+BB=B.groupby(['id', 'Periodo'], as_index=False).agg({'Producto-Tipo': 'first', 'Signo': 'first', 'Monto': 'sum', 't_i-0': 'first','TotalTMes': 'first',
+       'P PT': 'first', 'P PT i-1': 'first', 'P PT i-2': 'first', 't_i-1': 'first', 't_i-2': 'first', 't_i-3': 'first',
+       'delta0': 'first', 'delta1': 'first', 'delta2': 'first'})
+df_BB=pd.merge(b1,BB,on=['id','Periodo'],how='left')#N° transacciones mes anterior
+df_BB.to_pickle('Datos/intermedia/base_tBB.pkl', compression= 'zip')
+
+
+
+#C no tiene duplicados
+CD=df[df['Producto-Tipo']=='C-D'] 
+df_CD=pd.merge(b1,CD,on=['id','Periodo'],how='left')#N° transacciones mes anterior
+df_CD.to_pickle('Datos/intermedia/base_tCD.pkl', compression= 'zip')
+
+
+#DE no tiene duplicados
+DE=df[df['Producto-Tipo']=='D-E'] 
+df_DE=pd.merge(b1,DE,on=['id','Periodo'],how='left')#N° transacciones mes anterior
+df_DE.to_pickle('Datos/intermedia/base_tDE.pkl', compression= 'zip')
+
+#EE no tiene duplicados
+EE=df[df['Producto-Tipo']=='E-E'] 
+df_EE=pd.merge(b1,EE,on=['id','Periodo'],how='left')#N° transacciones mes anterior
+df_EE.to_pickle('Datos/intermedia/base_tEE.pkl', compression= 'zip')
 
 
 bipbop()
-#%%
-
-duplicateRowsDF = AA[AA.duplicated(['id', 'Periodo'],keep=False)]
-
-
-#%%
-# dfcito=AA[df_AA['id']==2]
-dfcito=AA.head()
-#%%
-# import copy
-# new_data2=copy.deepcopy(new_data)
-
-
-# a=new_data2['P_202001'][new_data2['P_202001']['id']==30]
-# b=new_data2['P_202002'][new_data2['P_202002']['id']==30]
-
-
-# #obtenemos las probabilidades
-# pp=new_data2['P_202001'].groupby(['id-producto-tipo'])['P PT'].mean().to_frame() #Todos los id que estaban en el periodo pasado
-# #%%
-
-# # pp['pp']=1
-# pp['id-producto-tipo'] = pp.index #indice a columna para hacer merge
-# pp.index.names = ['index'] #le cambiamos el nombre
-# pp=pp.rename(columns={'P PT': 'P PT i-1'})#probabilidades anteriores
-
-# print(pp)
-# bipbop()
-# #%%
-
-# new_data2["P_202002"]=pd.merge(new_data2['P_202002'],pp,on='id-producto-tipo',how='left')#N° transacciones mes anterior
-# #%%
-# jaja=new_data2['P_202001'][new_data2['P_202001']['id']==30]
-# jaja2=new_data2['P_202002'][new_data2['P_202002']['id']==30]
-
-# bipbop()
