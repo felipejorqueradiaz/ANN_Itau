@@ -17,6 +17,9 @@ os.chdir(path)
 print('desp:',os.getcwd())#os.listdir()
 from Modelos.functions.utils import bipbop
 
+#%%
+dft=df.head()
+
 #%% OBTENER DATASET ORIGINAL, MEZLCAMOS TRAIN Y TEST
 #Para crear los .csv
 df_train = pd.read_csv('Datos/raw/Transaccion_train.csv', index_col=0) #Hacer un acumulativo de montos o trANSSACCIONES
@@ -33,7 +36,7 @@ df = df.sort_values(['id', 'Periodo'],ascending = [True, True])
 df.Periodo = df.Periodo.astype('object') #Lo pasamos a str
 
 del df['Fecha']
-del df['id_Producto']
+del df['Id_Producto']
 del df['Tipo']
 #%% Subsetear por periodo:
 if (not os.path.exists('Datos/raw/transaction_subset')):# Crear carpeta ./transaction_subset
