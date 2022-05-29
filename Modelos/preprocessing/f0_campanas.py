@@ -19,10 +19,6 @@ df_test = pd.read_csv('Datos/raw/Campanas_test.csv',
                       index_col=0)
 df_test['dataset'] = 'test'
 
-df2_train = pd.read_csv('Datos/raw/Comunicaciones_train.csv',
-                       index_col=0)
-
-
 
 df = pd.concat([df_train, df_test], axis=0)
 df.drop('Fecha_Campaña', axis=1, inplace=True)

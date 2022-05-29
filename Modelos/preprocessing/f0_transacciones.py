@@ -12,7 +12,8 @@ periodos=[201901, 201902, 201903, 201904, 201905, 201906, 201907,201908, 201909,
 #%% Creación de path ..
 print('Antes:',os.getcwd())
 p = os.path.abspath(os.path.join(os.getcwd(), os.pardir))
-path='C:/Users/Asus/Documents/GitHub/ANN_Itau/'
+#path='C:/Users/Asus/Documents/GitHub/ANN_Itau/'
+path = 'C:/Users/Felipe/Documents/Github/ANN_Itau'
 os.chdir(path)
 print('desp:',os.getcwd())#os.listdir()
 from Modelos.functions.utils import bipbop

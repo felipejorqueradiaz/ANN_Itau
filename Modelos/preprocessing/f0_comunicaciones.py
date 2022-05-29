@@ -34,11 +34,21 @@ df = df.groupby(['id', 'Periodo','Id_Producto', 'Tipo', 'Producto-Tipo'],
 
 df.columns = ['id', 'Periodo', 'Id_Producto', 'Tipo',
               'Producto-Tipo', 'N_Lecturas', 'N_comunicaciones']
+
+df['Efic_comunicacion'] = df['N_Lecturas'] / df['N_comunicaciones']
 #%% Acumulado comunicaciones con lect
+df.sort_values(by=['id', 'Producto-Tipo', 'Periodo'], inplace=True)
+df.reset_index(drop=True, inplace=True)
 
+df['Com_cumsum'] = df.groupby(['id',
+                               'Producto-Tipo']
+                              )['N_comunicaciones'].transform(pd.Series.cumsum)
 
+df['Efic_cumsum'] = df.groupby(['id',
+                                'Producto-Tipo']
+                               )['N_Lecturas'].transform(pd.Series.cumsum)
+
+df['Efic_historica'] = df['Efic_cumsum']/df['Com_cumsum']
 
 #%%
 df.to_pickle('Datos/intermedia/comunicaciones.pkl', compression= 'zip')
-
-
