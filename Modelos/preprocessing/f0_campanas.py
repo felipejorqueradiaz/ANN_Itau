@@ -1,9 +1,6 @@
 import pandas as pd
 import numpy as np
 import os
-#%%
-
-#playsound('C:/Users/Felipe/Documents/Github/ANN_Itau/Modelos/functions/Kids_Cheering.mp3')
 
 #%% Carga de Datos
 print(os.getcwd())
