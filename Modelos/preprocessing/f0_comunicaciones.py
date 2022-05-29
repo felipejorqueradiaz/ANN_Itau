@@ -4,31 +4,36 @@ import numpy as np
 import os
 #%% Creación de path ..
 print('Antes:',os.getcwd())
-path='C:/Users/Asus/Documents/GitHub/ANN_Itau/'
+#path='C:/Users/Asus/Documents/GitHub/ANN_Itau/'
+path = 'C:/Users/Felipe/Documents/Github/ANN_Itau'
 os.chdir(path)
 print('desp:',os.getcwd())#os.listdir()
 
 #%% Carga de datos
 
-df_train = pd.read_csv('Datos/raw/Comunicaciones_train.csv')
+df_train = pd.read_csv('Datos/raw/Comunicaciones_train.csv',
+                       index_col=0)
 
 
-df_test = pd.read_csv('Datos/raw/Comunicaciones_test.csv')
+df_test = pd.read_csv('Datos/raw/Comunicaciones_test.csv',
+                      index_col=0)
 
 df_train['dataset'] = 'train'
 df_test['dataset'] = 'test'
 
 df = pd.concat([df_train, df_test], ignore_index=True)
 df = df.sort_values(['id', 'Periodo'],ascending = [True, True])
-df.Periodo = df.Periodo.astype('object') #Lo pasamos a str
+#df.Periodo = df.Periodo.astype('object') #Lo pasamos a str
 
 del df_train
 del df_test
 #%% Acumulado comunicaciones
-a=df.sample(30)
-df['id-producto-tipo']=df['id'].astype(str)+"-"+df['Producto-Tipo']
-cuenta=df.groupby(['id-producto-tipo'])['dataset'].count().to_frame() #Contar las transacciones
+df.drop(['Fecha', 'Tipo_comunicacion'], axis=1, inplace=True)
+df = df.groupby(['id', 'Periodo','Id_Producto', 'Tipo', 'Producto-Tipo'],
+                as_index=False).agg({'Lectura': ['sum','count']})
 
+df.columns = ['id', 'Periodo', 'Id_Producto', 'Tipo',
+              'Producto-Tipo', 'N_Lecturas', 'N_comunicaciones']
 #%% Acumulado comunicaciones con lect
 
 

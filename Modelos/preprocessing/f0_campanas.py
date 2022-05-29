@@ -1,9 +1,6 @@
 import pandas as pd
 import numpy as np
 import os
-#%%
-
-#playsound('C:/Users/Felipe/Documents/Github/ANN_Itau/Modelos/functions/Kids_Cheering.mp3')
 
 #%% Carga de Datos
 print(os.getcwd())
@@ -21,6 +18,11 @@ df_train['dataset'] = 'train'
 df_test = pd.read_csv('Datos/raw/Campanas_test.csv',
                       index_col=0)
 df_test['dataset'] = 'test'
+
+df2_train = pd.read_csv('Datos/raw/Comunicaciones_train.csv',
+                       index_col=0)
+
+
 
 df = pd.concat([df_train, df_test], axis=0)
 df.drop('Fecha_Campaña', axis=1, inplace=True)
@@ -65,29 +67,6 @@ df.drop(['tiene_camp'], axis=1, inplace=True)
 df.drop_duplicates(subset = ['id', 'Id_Producto', 'Tipo', 'Producto-Tipo', 'Canal'], inplace=True)
 df.reset_index(drop=True, inplace=True)
 
-#%%
-'''
-df.sort_values(by=['id', 'Producto-Tipo', 'Periodo'], inplace=True)
-
-
-rng = pd.date_range('2019-01-01','2021-05-01', freq='MS')
-
-df2 = (df.set_index('Date')
-         .groupby(['id', 'Id_Producto', 'Tipo', 'Producto-Tipo', 'Canal'])['tiene_camp']
-         .apply(lambda x: x.reindex(rng, fill_value=0))
-         .rename_axis(('id', 'Id_Producto', 'Tipo', 'Producto-Tipo', 'Canal','Date'))
-         .reset_index()
-        )
-df = pd.merge(df2, df, how="outer", on=['id', 'Id_Producto', 'Tipo', 'Producto-Tipo', 'Canal', "Date"])
-del df2
-'''
-
-#%% 5
-'''
-df['Periodo'] = pd.to_datetime(df["Date"]).dt.strftime("%Y%m")
-df.rename(columns={"tiene_camp_x": 'tiene_camp'}, inplace=True)
-df.drop(['tiene_camp_y', 'Date'], axis=1, inplace=True)
-'''
 #%% 6 new
 
 df_B = df[df['Canal'] == 'B']
@@ -131,3 +110,4 @@ df.loc[df['Periodo']<202008, 'dataset'] = 'train'
 # df.to_csv('Datos/intermedia/campañas.csv', index=False)
 
 df.to_pickle('Datos/intermedia/campañas.pkl', compression= 'zip')
+bipbop()
