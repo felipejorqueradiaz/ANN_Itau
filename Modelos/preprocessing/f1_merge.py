@@ -10,18 +10,23 @@ os.chdir(path)
 
 # transacciones_previa.to_pickle('Datos/intermedia/transacciones.pkl', compression= 'bz2')
 
-transacciones= pd.read_pickle('Datos/intermedia/transacciones.pkl', compression= 'bz2')
-
-del transacciones["dataset"]
-del transacciones["id-producto-tipo"]
-
-
-ids= transacciones['id'].unique()
+transacciones= pd.read_pickle('Datos/intermedia/transacciones.pkl', compression= 'zip')
 # campanas=pd.read_csv('Datos/intermedia/campañas.csv')
 # 
 #Faltan:
 #comunicaciones=pd.read_csv('Datos/intermedia/comunicaciones.plk', compression= 'bz2')
 #comunicaciones=pd.read_csv('Datos/intermedia/consumidores.plk', compression= 'bz2')
+
+#%%
+
+
+
+#%%
+
+
+
+#%%
+out = pd.DataFrame(ids.merge(pd.DataFrame(periodos),how='cross')
 
 #%%
 
