@@ -32,6 +32,9 @@ del df_test
 df = df.sort_values(['id', 'Periodo'],ascending = [True, True])
 df.Periodo = df.Periodo.astype('object') #Lo pasamos a str
 
+del df['Fecha']
+del df['id_Producto']
+del df['Tipo']
 #%% Subsetear por periodo:
 if (not os.path.exists('Datos/raw/transaction_subset')):# Crear carpeta ./transaction_subset
     os.mkdir('Datos/raw/transaction_subset')
@@ -161,28 +164,28 @@ cambio_porcentual_ntrans(2)
 
 #Caso base i=2
 
-new_data['P_201901']['Tenia Producto']=np.nan
+# new_data['P_201901']['Tenia Producto']=np.nan
 
-i=2
-tenia=new_data[f"P_{data_enumerate[i-1]}"].groupby(['id-producto-tipo'])['Monto'].count().to_frame() #Todos los id que estaban en el periodo pasado
-tenia['Monto']=1
-tenia['id-producto-tipo'] = tenia.index #indice a columna para hacer merge
-tenia.index.names = ['index'] #le cambiamos el nombre
-tenia=tenia.rename(columns={'Monto': 'Tenia Producto'})#transacciones anteriores
-new_data[f"P_{data_enumerate[i]}"]=pd.merge(new_data[f"P_{data_enumerate[i]}"],tenia,on='id-producto-tipo',how='left')#N° transacciones mes anterior
+# i=2
+# tenia=new_data[f"P_{data_enumerate[i-1]}"].groupby(['id-producto-tipo'])['Monto'].count().to_frame() #Todos los id que estaban en el periodo pasado
+# tenia['Monto']=1
+# tenia['id-producto-tipo'] = tenia.index #indice a columna para hacer merge
+# tenia.index.names = ['index'] #le cambiamos el nombre
+# tenia=tenia.rename(columns={'Monto': 'Tenia Producto'})#transacciones anteriores
+# new_data[f"P_{data_enumerate[i]}"]=pd.merge(new_data[f"P_{data_enumerate[i]}"],tenia,on='id-producto-tipo',how='left')#N° transacciones mes anterior
 
-#Generalizamos
+# #Generalizamos
 
-for i in data_enumerate.keys(): 
-    if i>=3:
-        tenia2=new_data[f"P_{data_enumerate[i-1]}"].groupby(['id-producto-tipo'])['Monto'].count().to_frame() #Todos los id que estaban en el periodo pasado
-        tenia2['Monto']=1
-        tenia2['id-producto-tipo'] = tenia2.index #indice a columna para hacer merge
-        tenia2.index.names = ['index'] #le cambiamos el nombre
-        tenia2=tenia2.rename(columns={'Monto': 'Tenia Producto'})#transacciones anteriores
-        tenia_diff = tenia2[~tenia2['id-producto-tipo'].isin(tenia['id-producto-tipo'])]
-        tenia = pd.concat([tenia, tenia_diff])
-        new_data[f"P_{data_enumerate[i]}"]=pd.merge(new_data[f"P_{data_enumerate[i]}"],tenia,on='id-producto-tipo',how='left')#N° transacciones mes anterior
+# for i in data_enumerate.keys(): 
+#     if i>=3:
+#         tenia2=new_data[f"P_{data_enumerate[i-1]}"].groupby(['id-producto-tipo'])['Monto'].count().to_frame() #Todos los id que estaban en el periodo pasado
+#         tenia2['Monto']=1
+#         tenia2['id-producto-tipo'] = tenia2.index #indice a columna para hacer merge
+#         tenia2.index.names = ['index'] #le cambiamos el nombre
+#         tenia2=tenia2.rename(columns={'Monto': 'Tenia Producto'})#transacciones anteriores
+#         tenia_diff = tenia2[~tenia2['id-producto-tipo'].isin(tenia['id-producto-tipo'])]
+#         tenia = pd.concat([tenia, tenia_diff])
+#         new_data[f"P_{data_enumerate[i]}"]=pd.merge(new_data[f"P_{data_enumerate[i]}"],tenia,on='id-producto-tipo',how='left')#N° transacciones mes anterior
         
  
         
@@ -199,19 +202,17 @@ for filename in periodos:
     else:
         df=pd.concat([df, new_data[f"P_{filename}"]], ignore_index=True)
         
-del df["dataset"]
 del df["id-producto-tipo"]
-#quitar otros productos...
+df.to_pickle('Datos/intermedia/transacciones.pkl', compression= 'zip')
 
 #%%
-# A-A, B-B, tC-D, D-E, E-E.
+
+# filtro=df[df['Producto-Tipo'].isin(['A-A','B-B','C-D','D-E','E-E'])]
 AA=df[df['Producto-Tipo']=='A-A']
-BB=df[df['Producto-Tipo']=='B-B']
-CD=df[df['Producto-Tipo']=='C-D']
-DE=df[df['Producto-Tipo']=='D-E']
-EE=df[df['Producto-Tipo']=='E-E']
-
-
+# BB=df[df['Producto-Tipo']=='B-B']                              
+# CD=df[df['Producto-Tipo']=='C-D'] 
+# DE=df[df['Producto-Tipo']=='D-E'] 
+# EE=df[df['Producto-Tipo']=='E-E'] 
 
 ids= df['id'].unique()
 periodos=df['Periodo'].unique()
@@ -219,14 +220,24 @@ periodos=df['Periodo'].unique()
 b1= pd.DataFrame({'id': np.repeat(ids,len(periodos)), 
                    'Periodo': np.tile(periodos,len(ids))})
 
+df_AA=pd.merge(b1,AA,on=['id','Periodo'],how='left')#N° transacciones mes anterior
+df_AA.to_pickle('Datos/intermedia/base_tAA.pkl', compression= 'zip')
 
-df.to_pickle('Datos/intermedia/transacciones.pkl', compression= 'zip')
+# df_BB
+# df_CD
+# df_DE
+# df_EE
+
 
 bipbop()
+#%%
+
+duplicateRowsDF = AA[AA.duplicated(['id', 'Periodo'],keep=False)]
+
 
 #%%
-dfcito=new_data["P_201901"].head(100)
-
+# dfcito=AA[df_AA['id']==2]
+dfcito=AA.head()
 #%%
 # import copy
 # new_data2=copy.deepcopy(new_data)
