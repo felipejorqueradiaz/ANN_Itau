@@ -1,18 +1,16 @@
 import pandas as pd
 import numpy as np
 import os
-
-
 #%%
 
-playsound('C:/Users/Felipe/Documents/Github/ANN_Itau/Modelos/functions/Kids_Cheering.mp3')
+#playsound('C:/Users/Felipe/Documents/Github/ANN_Itau/Modelos/functions/Kids_Cheering.mp3')
 
 #%% Carga de Datos
 print(os.getcwd())
-#path = 'C:\Users\Felipe\Documents\Github\ANN_Itau'
+path = 'C:/Users/Felipe/Documents/Github/ANN_Itau'
 #path='C:/Users/Asus/Documents/GitHub/ANN_Itau'
 
-#os.chdir(path)
+os.chdir(path)
 
 from Modelos.functions.utils import bipbop
 #%%
@@ -60,14 +58,15 @@ df.loc[df['Periodo']>=202008, 'Resultado'] = np.nan
 
 #Creamos variable dummy
 df.rename(columns={"Duracion_Campaña": "tiene_camp"}, inplace=True)
-df['tiene_camp'] = 1
+df.drop(['tiene_camp'], axis=1, inplace=True)
 
 #Rellenamos los meses faltantes sin campaña
-df['Date'] = pd.to_datetime(df.Periodo.astype(int).astype(str),format='%Y%m')
-df.drop_duplicates(subset = ['id', 'Id_Producto', 'Tipo', 'Producto-Tipo', 'Canal', 'Date'], inplace=True)
+#df['Date'] = pd.to_datetime(df.Periodo.astype(int).astype(str),format='%Y%m')
+df.drop_duplicates(subset = ['id', 'Id_Producto', 'Tipo', 'Producto-Tipo', 'Canal'], inplace=True)
 df.reset_index(drop=True, inplace=True)
 
 #%%
+'''
 df.sort_values(by=['id', 'Producto-Tipo', 'Periodo'], inplace=True)
 
 
@@ -81,20 +80,49 @@ df2 = (df.set_index('Date')
         )
 df = pd.merge(df2, df, how="outer", on=['id', 'Id_Producto', 'Tipo', 'Producto-Tipo', 'Canal', "Date"])
 del df2
+'''
 
 #%% 5
+'''
 df['Periodo'] = pd.to_datetime(df["Date"]).dt.strftime("%Y%m")
 df.rename(columns={"tiene_camp_x": 'tiene_camp'}, inplace=True)
 df.drop(['tiene_camp_y', 'Date'], axis=1, inplace=True)
+'''
+#%% 6 new
 
+df_B = df[df['Canal'] == 'B']
+df_B['Canal_B'] = 1
+df_B.drop('Canal', axis = 1, inplace=True)
+
+df_C = df[df['Canal'] == 'C']
+df_C['Canal_C'] = 1
+df_C.drop('Canal', axis = 1, inplace=True)
+
+df = df_B.merge(df_C, how = 'outer', on = ['id', 'Id_Producto', 'Tipo',
+                                            'Producto-Tipo', 'Periodo',
+                                            'dataset'])
+df.fillna(0, inplace=True)
+#%%
+
+df['Resultado'] = df[['Resultado_x', 'Resultado_y']].max(axis=1)
+df.drop(['Resultado_x', 'Resultado_y'], axis=1, inplace=True)
 #%% 6
-df.sort_values(by=['id', 'Producto-Tipo', 'Periodo', 'Canal'], inplace=True)
+df.sort_values(by=['id', 'Producto-Tipo', 'Periodo'], inplace=True)
 df.reset_index(drop=True, inplace=True)
 
-df['camp_hist'] = df.groupby(['id', 'Producto-Tipo'])['tiene_camp'].transform(pd.Series.cumsum)
+df['CanalPT_C_cumsum'] = df.groupby(['id', 'Producto-Tipo'])['Canal_C'].transform(pd.Series.cumsum)
+df['CanalPT_B_cumsum'] = df.groupby(['id', 'Producto-Tipo'])['Canal_B'].transform(pd.Series.cumsum)
+df['Camp_PT_cumsum'] = df['CanalPT_C_cumsum'] + df['CanalPT_B_cumsum']
 
+bipbop()
+#%%
+df['Canal_C_cumsum'] = df.groupby(['id'])['Canal_C'].transform(pd.Series.cumsum)
+df['Canal_B_cumsum'] = df.groupby(['id'])['Canal_B'].transform(pd.Series.cumsum)
+df['Camp_cumsum'] = df['Canal_C_cumsum'] + df['Canal_B_cumsum']
+
+bipbop()
 #%% 7
-df['Periodo'] = df.Periodo.astype(int)
+#df['Periodo'] = df.Periodo.astype(int)
 #%% 8
 df.loc[df['Periodo']>=202008, 'dataset'] = 'test'
 df.loc[df['Periodo']<202008, 'dataset'] = 'train'
