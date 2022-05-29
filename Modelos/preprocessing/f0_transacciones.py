@@ -4,10 +4,12 @@ import os
 import shutil
 
 
-
 periodos=[201901, 201902, 201903, 201904, 201905, 201906, 201907,201908, 201909, 201910, 201911, 201912,
           202001, 202002, 202003,202004, 202005, 202006, 202007,202008, 202009, 202010, 202011] #Para iterar
 
+
+#%%
+print(df.shape)
 
 #%% Creación de path ..
 print('Antes:',os.getcwd())
@@ -27,7 +29,6 @@ df_train = pd.read_csv('Datos/raw/Transaccion_train.csv', index_col=0) #Hacer un
 df_test = pd.read_csv('Datos/raw/Transaccion_test.csv', index_col=0) #Hacer un acumulativo de montos o trANSSACCIONES
 
 
-
 df = pd.concat([df_train, df_test], ignore_index=True)
 del df_train
 del df_test 
@@ -37,6 +38,9 @@ df.Periodo = df.Periodo.astype('object') #Lo pasamos a str
 del df['Fecha']
 del df['Id_Producto']
 del df['Tipo']
+
+#df.to_csv('Datos/raw/Transaccion_bi.csv',index=False)
+
 #%% Subsetear por periodo:
 if (not os.path.exists('Datos/raw/transaction_subset')):# Crear carpeta ./transaction_subset
     os.mkdir('Datos/raw/transaction_subset')
@@ -205,8 +209,7 @@ for filename in periodos:
         
 del df["id-producto-tipo"]
 df.to_pickle('Datos/intermedia/transacciones.pkl', compression= 'zip')
-#%%
-print(df['Producto-Tipo'].value_counts())
+
 
 #%% Creación de target y separación por tipo de producto
 
