@@ -8,6 +8,25 @@ path='C:/Users/Asus/Documents/GitHub/ANN_Itau'
 
 os.chdir(path)
 
+
+#%%
+
+base_A = pd.read_pickle('Datos/intermedia/base_tAA.pkl', compression= 'zip')
+
+
+
+
+
+
+
+
+#%%
+
+#%%
+
+#%%
+
+
 # transacciones_previa.to_pickle('Datos/intermedia/transacciones.pkl', compression= 'bz2')
 
 transacciones= pd.read_pickle('Datos/intermedia/transacciones.pkl', compression= 'zip')
