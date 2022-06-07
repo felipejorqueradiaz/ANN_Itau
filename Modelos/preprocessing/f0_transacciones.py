@@ -8,9 +8,6 @@ periodos=[201901, 201902, 201903, 201904, 201905, 201906, 201907,201908, 201909,
           202001, 202002, 202003,202004, 202005, 202006, 202007,202008, 202009, 202010, 202011] #Para iterar
 
 
-#%%
-print(df.shape)
-
 #%% Creación de path ..
 print('Antes:',os.getcwd())
 p = os.path.abspath(os.path.join(os.getcwd(), os.pardir))
