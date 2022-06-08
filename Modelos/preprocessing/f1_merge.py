@@ -11,16 +11,21 @@ os.chdir(path)
 
 #%%
 
-base_A = pd.read_pickle('Datos/intermedia/base_tAA.pkl', compression= 'zip')
+trans_A = pd.read_pickle('Datos/intermedia/base_tAA.pkl', compression= 'zip')
 
+#%%
 
+campanas = pd.read_pickle('Datos/intermedia/campañas.pkl', compression= 'zip')
+campanas.drop(['dataset', 'Id_Producto', 'Tipo'], axis=1, inplace=True)
 
-
-
-
+comunicaciones = pd.read_pickle('Datos/intermedia/comunicaciones.pkl', compression= 'zip')
+comunicaciones.drop(['Id_Producto', 'Tipo'], axis=1, inplace=True)
 
 
 #%%
+
+base_A = trans_A.merge(campanas[campanas['Producto-Tipo'] == 'A-A'].drop('Producto-Tipo', axis=1), how='left')
+
 
 #%%
 
