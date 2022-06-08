@@ -113,7 +113,7 @@ for filename in periodos:
     else:
         df=pd.concat([df, new_data[f"P_{filename}"]], ignore_index=True)
         
-
+del new_data
 #df.to_pickle('Datos/intermedia/transacciones.pkl', compression= 'zip')
 bipbop()
 
