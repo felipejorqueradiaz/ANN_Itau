@@ -310,10 +310,6 @@ if n>1:
         data_e=cambio_porcentual_ntrans(i,data_e) #Desde 2 meses antes
         
 bipbop() 
-#%%
-a=data_a['P_201901']
-b=data_a['P_201902']
-c=data_a['P_201903']
 
 #%% Creación de target y separación por tipo de producto
 
@@ -324,6 +320,9 @@ for filename in periodos:
         print('se lo saltó')
     else:
         aa=pd.concat([aa, data_a[f"P_{filename}"]], ignore_index=True)
+  
+del aa['Producto-Tipo']
+del aa['id-producto-tipo']
 aa.to_pickle('Datos/intermedia/base_tAA.pkl', compression= 'zip')
 
 
@@ -335,6 +334,8 @@ for filename in periodos:
         print('se lo saltó')
     else:
         bb=pd.concat([bb, data_b[f"P_{filename}"]], ignore_index=True)
+del bb['Producto-Tipo']
+del bb['id-producto-tipo']
 bb.to_pickle('Datos/intermedia/base_tBB.pkl', compression= 'zip')
 
 
@@ -346,6 +347,8 @@ for filename in periodos:
         print('se lo saltó')
     else:
         cc=pd.concat([cc, data_c[f"P_{filename}"]], ignore_index=True)
+del cc['Producto-Tipo']
+del cc['id-producto-tipo']
 cc.to_pickle('Datos/intermedia/base_tCD.pkl', compression= 'zip')
 
 dd=data_d["P_201901"]
@@ -355,6 +358,8 @@ for filename in periodos:
         print('se lo saltó')
     else:
         dd=pd.concat([dd, data_d[f"P_{filename}"]], ignore_index=True)
+del dd['Producto-Tipo']
+del dd['id-producto-tipo']
 dd.to_pickle('Datos/intermedia/base_tDE.pkl', compression= 'zip')
 
 ee=data_e["P_201901"]
@@ -364,6 +369,9 @@ for filename in periodos:
         print('se lo saltó')
     else:
         ee=pd.concat([ee, data_e[f"P_{filename}"]], ignore_index=True)
+        
+del ee['Producto-Tipo']
+del ee['id-producto-tipo']
 ee.to_pickle('Datos/intermedia/base_tEE.pkl', compression= 'zip')
 
 
