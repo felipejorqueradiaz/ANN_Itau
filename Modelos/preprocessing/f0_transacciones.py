@@ -48,15 +48,11 @@ df.drop_duplicates()
 bipbop()
 
 #%% Subsetear por periodo:
-if (not os.path.exists('Datos/raw/transaction_subset')):# Crear carpeta ./transaction_subset
-    os.mkdir('Datos/raw/transaction_subset')
-else:# Eliminar anteriores para reemplazarlos:
-    shutil.rmtree('Datos/raw/transaction_subset')
-    os.mkdir('Datos/raw/transaction_subset')
+
 data={}
 for x in df.Periodo.unique():
     data[f"P_{x}"]=df.loc[(df.Periodo ==x)]
-    data[f"P_{x}"].to_csv('Datos/raw/transaction_subset/'+f"P_{x}"+'.csv',index=False)
+
 del df #Las borramos pq son cuaticas
 bipbop()
 
@@ -155,7 +151,6 @@ bipbop()
 
 
 #%% Lag de la probabildiad
-
 
 def lag_probabilidad(n,original): #n=1, periodo anterior
     nuevo=copy.deepcopy(original)
