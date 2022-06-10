@@ -23,6 +23,7 @@ df_test['dataset'] = 'test'
 df = pd.concat([df_train, df_test], axis=0)
 df.drop('Fecha_Campaña', axis=1, inplace=True)
 
+# df.Resultado = df.Resultado.astype(int, errors='ignore')
 # del df['dataset']
 # df.to_csv('Datos/raw/campañas_bi.csv',index=False)
 
