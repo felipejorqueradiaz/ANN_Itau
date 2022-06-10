@@ -4,9 +4,9 @@ import numpy as np
 import pickle
  
 #%% Carga de dataset
-path='C:/Users/Asus/Documents/GitHub/ANN_Itau'
+#path='C:/Users/Asus/Documents/GitHub/ANN_Itau'
 #path = 'C:/Users/Felipe/Documents/Github/ANN_Itau'
-os.chdir(path)
+#os.chdir(path)
 
 
 
@@ -25,6 +25,7 @@ trans['D-E'] = pd.read_pickle('Datos/intermedia/base_tDE.pkl',
 trans['E-E'] = pd.read_pickle('Datos/intermedia/base_tEE.pkl',
                               compression= 'zip')
 
+a = trans['A-A']
 #%% Lectura de Campañas y Comunicaciones
 
 campanas = pd.read_pickle('Datos/intermedia/campañas.pkl', compression= 'zip')
@@ -43,6 +44,8 @@ mes_test = 202002
 for pt, data in trans.items():
     
     ## MERGE
+    
+    data = data.drop_duplicates(subset = ['id', 'Periodo'] ,keep='first')
     base = data.merge(
         campanas[campanas['Producto-Tipo'] == pt]
             .drop('Producto-Tipo', axis=1),
@@ -70,8 +73,8 @@ for pt, data in trans.items():
     
     ## Train - Test
 
-    train = base[base['Periodo']<mes_test].drop(['id', 'Periodo'], axis=1)
-    test = base[(base['Periodo']<202005) & (base['Periodo']>=mes_test)].drop(['id', 'Periodo'], axis=1)
+    train = base[base['Periodo']<mes_test]
+    test = base[(base['Periodo']<202005) & (base['Periodo']>=mes_test)]
     
     train.to_pickle('Datos/final/{}_train.pkl'.format(pt), compression= 'zip')
     test.to_pickle('Datos/final/{}_test.pkl'.format(pt), compression= 'zip')
