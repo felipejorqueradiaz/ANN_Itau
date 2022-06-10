@@ -16,13 +16,13 @@ trans = {}
 
 trans['A-A'] = pd.read_pickle('Datos/intermedia/base_tAA.pkl',
                               compression= 'zip')
-trans['B-B'] = pd.read_pickle('Datos/intermedia/base_tAA.pkl',
+trans['B-B'] = pd.read_pickle('Datos/intermedia/base_tBB.pkl',
                               compression= 'zip')
-trans['C-D'] = pd.read_pickle('Datos/intermedia/base_tAA.pkl',
+trans['C-D'] = pd.read_pickle('Datos/intermedia/base_tCD.pkl',
                               compression= 'zip')
-trans['D-E'] = pd.read_pickle('Datos/intermedia/base_tAA.pkl',
+trans['D-E'] = pd.read_pickle('Datos/intermedia/base_tDE.pkl',
                               compression= 'zip')
-trans['E-E'] = pd.read_pickle('Datos/intermedia/base_tAA.pkl',
+trans['E-E'] = pd.read_pickle('Datos/intermedia/base_tEE.pkl',
                               compression= 'zip')
 
 #%% Lectura de Campañas y Comunicaciones
@@ -35,6 +35,8 @@ comunicaciones.drop(['Id_Producto', 'Tipo'], axis=1, inplace=True)
 
 
 #%% Merge
+
+
 
 mes_test = 202002
 
@@ -64,7 +66,8 @@ for pt, data in trans.items():
     base['Target'] = base.groupby('id')['Compra'].rolling(3).max().shift(-3).reset_index(0,drop=True)
     
     base.dropna().reset_index(inplace = True)
-    #base.to_csv('Datos/final/{}_base.csv'.format(pt))
+    base.to_csv(f'Datos/final/{pt}_base.csv',index=False)
+    
     ## Train - Test
 
     train = base[base['Periodo']<mes_test].drop(['id', 'Periodo'], axis=1)
