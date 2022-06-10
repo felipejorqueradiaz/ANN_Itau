@@ -5,8 +5,9 @@ import pickle
  
 #%% Carga de dataset
 path='C:/Users/Asus/Documents/GitHub/ANN_Itau'
-
+#path = 'C:/Users/Felipe/Documents/Github/ANN_Itau'
 os.chdir(path)
+
 
 
 #%% Lectura de Transacciones
@@ -63,7 +64,7 @@ for pt, data in trans.items():
     base['Target'] = base.groupby('id')['Compra'].rolling(3).max().shift(-3).reset_index(0,drop=True)
     
     base.dropna().reset_index(inplace = True)
-    
+    #base.to_csv('Datos/final/{}_base.csv'.format(pt))
     ## Train - Test
 
     train = base[base['Periodo']<mes_test].drop(['id', 'Periodo'], axis=1)

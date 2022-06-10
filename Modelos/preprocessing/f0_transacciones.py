@@ -57,8 +57,6 @@ dim={}
 for i in list(data.keys()):
     dim[i]=data[i].shape[0]
     definir_tipos(data[i])
-ncol=data['P_201906'].shape[1]
-print(f'El dataset tiene {sum(dim.values())} filas y {ncol} columnas')
 
 bipbop()
 
