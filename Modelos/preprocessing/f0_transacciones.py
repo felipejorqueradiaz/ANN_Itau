@@ -1,28 +1,20 @@
 import pandas as pd
 import numpy as np
 import os
-import shutil
 import copy
 
 periodos=[201901, 201902, 201903, 201904, 201905, 201906, 201907,201908, 201909, 201910, 201911, 201912,
           202001, 202002, 202003,202004, 202005, 202006, 202007,202008, 202009, 202010, 202011] #Para iterar
 n=3
-
 #%% Creación de path ..
-print('Antes:',os.getcwd())
-p = os.path.abspath(os.path.join(os.getcwd(), os.pardir))
 path='C:/Users/Asus/Documents/GitHub/ANN_Itau/'
 #path = 'C:/Users/Felipe/Documents/Github/ANN_Itau'
 os.chdir(path)
-print('desp:',os.getcwd())#os.listdir()
 from Modelos.functions.utils import bipbop
-
 
 #%% OBTENER DATASET ORIGINAL, MEZLCAMOS TRAIN Y TEST
 #Para crear los .csv
 df_train = pd.read_csv('Datos/raw/Transaccion_train.csv', index_col=0) #Hacer un acumulativo de montos o trANSSACCIONES
-
-
 df_test = pd.read_csv('Datos/raw/Transaccion_test.csv', index_col=0) #Hacer un acumulativo de montos o trANSSACCIONES
 
 
@@ -31,22 +23,21 @@ del df_train
 del df_test 
 df = df.sort_values(['id', 'Periodo'],ascending = [True, True])
 df.Periodo = df.Periodo.astype('object') #Lo pasamos a str
-
+df.Monto = df.Monto.astype(int)
 del df['Fecha']
 del df['Id_Producto']
 del df['Tipo']
-del df['Signo']
-del df['Monto']
+
+
 
 ids= df['id'].unique()
 
 
+# df.to_csv('Datos/raw/Transaccion_bi.csv',index=False)
+del df['Monto']
+del df['Signo']
 df['Target']=1
-df.drop_duplicates()
-
-#df.to_csv('Datos/raw/Transaccion_bi.csv',index=False)
 bipbop()
-
 #%% Subsetear por periodo:
 
 data={}
@@ -262,9 +253,14 @@ if n>1:
         data_e=lag_n_ntrans(i,data_e) #Desde 2 meses antes
         
 bipbop()        
-        
 
 #%%  Pasamos ese aumento en transacciones a cambio porcentual
+
+a_data_a=copy.deepcopy(data_a)
+a_data_b=copy.deepcopy(data_b)
+a_data_c=copy.deepcopy(data_c)
+a_data_d=copy.deepcopy(data_d)
+a_data_e=copy.deepcopy(data_e)
 def cambio_porcentual_ntrans(j,dataset):
     '''
     j: Es para obtener cuanto, en porcentaje, aumentaron las transacciones del periodo j respecto al periodo j+1.
@@ -371,3 +367,11 @@ ee.to_pickle('Datos/intermedia/base_tEE.pkl', compression= 'zip')
 
 
 bipbop()
+
+
+#%%
+#DESCUBRIR CUANTAS TRANSACCIONES HACE POR PRODUCTO POR MES
+#VERIFICAR EN DATASET BASE2364
+
+
+que=bb[bb.id==2364]

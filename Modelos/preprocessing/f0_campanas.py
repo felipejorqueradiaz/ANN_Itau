@@ -4,8 +4,8 @@ import os
 
 #%% Carga de Datos
 print(os.getcwd())
-path = 'C:/Users/Felipe/Documents/Github/ANN_Itau'
-#path='C:/Users/Asus/Documents/GitHub/ANN_Itau'
+#path = 'C:/Users/Felipe/Documents/Github/ANN_Itau'
+path='C:/Users/Asus/Documents/GitHub/ANN_Itau'
 
 os.chdir(path)
 
@@ -22,6 +22,10 @@ df_test['dataset'] = 'test'
 
 df = pd.concat([df_train, df_test], axis=0)
 df.drop('Fecha_Campaña', axis=1, inplace=True)
+
+# del df['dataset']
+# df.to_csv('Datos/raw/campañas_bi.csv',index=False)
+
 
 del df_train
 del df_test
