@@ -311,12 +311,17 @@ for filename in periodos:
         print('se lo saltó')
     else:
         aa=pd.concat([aa, data_a[f"P_{filename}"]], ignore_index=True)
-  
+
 del aa['Producto-Tipo']
 del aa['id-producto-tipo']
+#Quitamos n primeros periodos
+
+for i in range(1,n+1):
+    aa = aa[aa.Periodo != int(f'20190{i}')]
+
 aa.to_pickle('Datos/intermedia/base_tAA.pkl', compression= 'zip')
 
-
+del aa
 
 bb=data_b["P_201901"]
 for filename in periodos:
@@ -327,9 +332,11 @@ for filename in periodos:
         bb=pd.concat([bb, data_b[f"P_{filename}"]], ignore_index=True)
 del bb['Producto-Tipo']
 del bb['id-producto-tipo']
+for i in range(1,n+1):
+    bb = bb[bb.Periodo != int(f'20190{i}')]
 bb.to_pickle('Datos/intermedia/base_tBB.pkl', compression= 'zip')
 
-
+del bb
 
 cc=data_c["P_201901"]
 for filename in periodos:
@@ -340,7 +347,11 @@ for filename in periodos:
         cc=pd.concat([cc, data_c[f"P_{filename}"]], ignore_index=True)
 del cc['Producto-Tipo']
 del cc['id-producto-tipo']
+for i in range(1,n+1):
+    cc = cc[cc.Periodo != int(f'20190{i}')]
 cc.to_pickle('Datos/intermedia/base_tCD.pkl', compression= 'zip')
+
+del cc
 
 dd=data_d["P_201901"]
 for filename in periodos:
@@ -351,7 +362,11 @@ for filename in periodos:
         dd=pd.concat([dd, data_d[f"P_{filename}"]], ignore_index=True)
 del dd['Producto-Tipo']
 del dd['id-producto-tipo']
+for i in range(1,n+1):
+    dd = dd[dd.Periodo != int(f'20190{i}')]
 dd.to_pickle('Datos/intermedia/base_tDE.pkl', compression= 'zip')
+
+del dd
 
 ee=data_e["P_201901"]
 for filename in periodos:
@@ -363,15 +378,9 @@ for filename in periodos:
         
 del ee['Producto-Tipo']
 del ee['id-producto-tipo']
+for i in range(1,n+1):
+    ee = ee[ee.Periodo != int(f'20190{i}')]
 ee.to_pickle('Datos/intermedia/base_tEE.pkl', compression= 'zip')
 
 
 bipbop()
-
-
-#%%
-#DESCUBRIR CUANTAS TRANSACCIONES HACE POR PRODUCTO POR MES
-#VERIFICAR EN DATASET BASE2364
-
-
-que=bb[bb.id==2364]
