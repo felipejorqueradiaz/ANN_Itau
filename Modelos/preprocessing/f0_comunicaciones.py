@@ -1,11 +1,10 @@
 #%% Librerias
 import pandas as pd
-import numpy as np
 import os
 #%% Creación de path ..
 print('Antes:',os.getcwd())
-#path='C:/Users/Asus/Documents/GitHub/ANN_Itau/'
-path = 'C:/Users/Felipe/Documents/Github/ANN_Itau'
+path='C:/Users/Asus/Documents/GitHub/ANN_Itau/'
+#path = 'C:/Users/Felipe/Documents/Github/ANN_Itau'
 os.chdir(path)
 print('desp:',os.getcwd())#os.listdir()
 
@@ -24,6 +23,10 @@ df_test['dataset'] = 'test'
 df = pd.concat([df_train, df_test], ignore_index=True)
 df = df.sort_values(['id', 'Periodo'],ascending = [True, True])
 #df.Periodo = df.Periodo.astype('object') #Lo pasamos a str
+
+# df.Lectura = df.Lectura.astype(int, errors='ignore')
+# del df['dataset']
+# df.to_csv('Datos/raw/comunicaciones_bi.csv',index=False)
 
 del df_train
 del df_test
