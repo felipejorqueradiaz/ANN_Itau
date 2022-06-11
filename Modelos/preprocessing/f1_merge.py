@@ -8,8 +8,6 @@ path='C:/Users/Asus/Documents/GitHub/ANN_Itau'
 #path = 'C:/Users/Felipe/Documents/Github/ANN_Itau'
 os.chdir(path)
 
-
-
 #%% Lectura de Transacciones
 
 trans = {}
@@ -112,6 +110,15 @@ compras = np.where(probs >0, 1, 0)
 compras = np.where(compras, np.array(product_list), 'nulo')
 compras_sorted = np.take_along_axis(compras,sort_mask,axis=1)[:, [4, 3, 2, 1, 0]]
 
+#%%
+
+compras2 = compras_sorted.tolist()
+compras2 = [[valor for valor in lista if valor!='nulo'] for lista in compras2]
+
+target_final = ndata[['id', 'Periodo']].copy()
+target_final['productos'] = compras2
+
+target_final.to_pickle('Datos/final/Target.pkl', compression='zip')
 #%%
 
 compras2 = [' '.join(row).replace('nulo','').replace('  ',' ').strip() for row in compras_sorted]
