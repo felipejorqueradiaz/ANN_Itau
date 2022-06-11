@@ -5,7 +5,7 @@ import numpy as np
 from imblearn.under_sampling import RandomUnderSampler #Undersampling
 from sklearn.naive_bayes import GaussianNB #Model
 from sklearn.metrics import classification_report
-import ml_metrics
+import ml_metrics as metrics
 #%% Carga de dataset
 path='C:/Users/Asus/Documents/GitHub/ANN_Itau'
 #path = 'C:/Users/Felipe/Documents/Github/ANN_Itau'
@@ -13,7 +13,6 @@ path='C:/Users/Asus/Documents/GitHub/ANN_Itau'
 
 os.chdir(path)
 
-#%%
 target= pd.read_pickle('Datos/final/Target.pkl', compression= 'zip')
 #%%
 
@@ -61,19 +60,20 @@ for prod in product_list:
     pred[prod] = model.predict_proba(X_test).T[1]
     real[prod] = y_test
 
-real = pd.concat([real, id_per], axis = 1, ignore_index=True)
+# real = pd.concat([real, id_per], axis = 1, ignore_index=True)
 pred = pd.concat([pred, id_per.reset_index(drop = True)], axis = 1, ignore_index=True)
 
-real.columns = product_list + ['id', 'Periodo']
+# real.columns = product_list + ['id', 'Periodo']
 pred.columns = product_list + ['id', 'Periodo']
 #%%
-
+a=target.head()
+#%%
 
 prod_vector = np.array(product_list)
 corte = 0.5
 
 
-for mes in real.Periodo.unique():
+for mes in pred.Periodo.unique():
     real_temp = target[target['Periodo'] == mes].reset_index(drop=True)
     list_true = real_temp['productos'].to_numpy(copy = True).tolist()
     
@@ -98,4 +98,4 @@ v_pred = np.where(d2_pred, prod_vector, 'nulo')
 v_pred = np.take_along_axis(v_pred,pred_sort_mask,axis=1)[:, [4, 3, 2, 1, 0]].tolist()
 v_pred = [[valor for valor in lista if valor!='nulo'] for lista in v_pred]
 #np.where(XXXXXX <= corte, 0, 1)
-print('EL MAP5 en general es:'.format(mes), metrics.mapk(v_true, v_pred, 5), '\n\n')
+print('EL MAP5 en general es:', metrics.mapk(list_true, v_pred, 5), '\n\n')
