@@ -71,7 +71,7 @@ for pt, data in trans.items():
     '''
     
     n_target = base[['id', 'Periodo']]
-    n_target[pt] = base.groupby('id')['P PT'].rolling(3).mean().shift(-3).reset_index(0,drop=True)
+    n_target[pt] = base.groupby('id')['P PT'].rolling(3).max().shift(-3).reset_index(0,drop=True)
     target2[pt] = n_target
     ## Train - Test
 
@@ -121,16 +121,3 @@ target_final = ndata[['id', 'Periodo']].copy()
 target_final['productos'] = compras2
 
 target_final.to_pickle('Datos/final/Target.pkl', compression='zip')
-#%%
-
-compras2 = [' '.join(row).replace('nulo','').replace('  ',' ').strip() for row in compras_sorted]
-
-#%%
-target_final = ndata[['id', 'Periodo']].copy()
-target_final['productos'] = compras2
-
-target_final.to_json('Datos/final/Target.json')
-
-#%%
-
-t = pd.read_pickle('Datos/final/Target.pkl', compression= 'zip')

@@ -139,8 +139,4 @@ pred_final['id']=valid['id'].copy()
 pred_final['productos'] = final
 pred_final['id']=pred_final['id'].astype(np.int64)
 pred_final=pred_final.fillna(" ")
-pred_final.to_csv('Datos/output/Resultados.csv',index=False)
-
-#%%
-
-t = pd.read_pickle('Datos/final/Target.pkl', compression= 'zip')
+pred_final.to_csv('Datos/output/NaibeBayes.csv',index=False)
