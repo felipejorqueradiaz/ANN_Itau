@@ -2,7 +2,6 @@ import os
 import pandas as pd
 import numpy as np
 import pickle
-import ml_metrics
  
 #%% Carga de dataset
 path='C:/Users/Asus/Documents/GitHub/ANN_Itau'
@@ -17,6 +16,8 @@ trans = {}
 
 trans['A-A'] = pd.read_pickle('Datos/intermedia/base_tAA.pkl',
                               compression= 'zip')
+
+'''
 trans['B-B'] = pd.read_pickle('Datos/intermedia/base_tBB.pkl',
                               compression= 'zip')
 trans['C-D'] = pd.read_pickle('Datos/intermedia/base_tCD.pkl',
@@ -27,6 +28,9 @@ trans['E-E'] = pd.read_pickle('Datos/intermedia/base_tEE.pkl',
                               compression= 'zip')
 
 a = trans['A-A']
+
+'''
+
 #%% Lectura de Campañas y Comunicaciones
 
 campanas = pd.read_pickle('Datos/intermedia/campañas.pkl', compression= 'zip')
@@ -70,6 +74,7 @@ for pt, data in trans.items():
     base['Target'] = base.groupby('id')['Compra'].rolling(3).max().shift(-3).reset_index(0,drop=True)
     
     base.dropna().reset_index(inplace = True)
+    '''
     base.to_csv(f'Datos/final/{pt}_base.csv',index=False)
     
     ## Train - Test
@@ -79,6 +84,7 @@ for pt, data in trans.items():
     
     train.to_pickle('Datos/final/{}_train.pkl'.format(pt), compression= 'zip')
     test.to_pickle('Datos/final/{}_test.pkl'.format(pt), compression= 'zip')
+    '''
 #%%
 
 #from imblearn.under_sampling import RandomUnderSampler
