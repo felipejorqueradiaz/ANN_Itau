@@ -4,9 +4,9 @@ import numpy as np
 import pickle
  
 #%% Carga de dataset
-#path='C:/Users/Asus/Documents/GitHub/ANN_Itau'
+path='C:/Users/Asus/Documents/GitHub/ANN_Itau'
 #path = 'C:/Users/Felipe/Documents/Github/ANN_Itau'
-#os.chdir(path)
+os.chdir(path)
 
 
 
