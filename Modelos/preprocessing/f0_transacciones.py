@@ -23,22 +23,32 @@ del df_train
 del df_test 
 df = df.sort_values(['id', 'Periodo'],ascending = [True, True])
 df.Periodo = df.Periodo.astype('object') #Lo pasamos a str
-df.Monto = df.Monto.astype(int)
-del df['Fecha']
-del df['Id_Producto']
-del df['Tipo']
-
-
+df.Monto = pd.to_numeric(df.Monto)
 
 ids= df['id'].unique()
 
+bipbop()
+#%% Limpieza:
+# Luego del EDA se realiza la siguiente limpieza de los datos:
+    # Se quita Fecha
+    # Se quita ID producto y tipo
+    # Se pasan los montos a valor absoluto
+    # Signos a numérico
+del df['Fecha']
+del df['Id_Producto']
+del df['Tipo']   
 
-# df.to_csv('Datos/raw/Transaccion_bi.csv',index=False)
-del df['Monto']
-del df['Signo']
+df.Monto = df.Monto.abs() #Asumimos que los negativos son mal punteados
+print(df.columns)
+df.to_csv('Datos/raw/Transaccion_bi.csv',index=False)
+df['Signo'] = df['Signo'].replace(['Negativo','Positivo',np.nan],[-1,1,0])
 df['Target']=1
 bipbop()
+
 #%% Subsetear por periodo:
+    
+#Se decide dividir el dataset en periodos para hacer más fácil el procesamiento (tarda mucho trabajar transacciones completo)
+# y para iterar más facil sobre los periodos
 
 data={}
 for x in df.Periodo.unique():
@@ -46,8 +56,6 @@ for x in df.Periodo.unique():
 
 del df #Las borramos pq son cuaticas
 bipbop()
-
-
 #%% Definir tipos
 def definir_tipos(dataset):    
     dataset.id = dataset.id.astype('object') #Lo pasamos a str
