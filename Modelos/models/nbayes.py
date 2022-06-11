@@ -85,13 +85,13 @@ for mes in real.Periodo.unique():
 d_true = real[product_list].to_numpy(copy = True)
 true_sort_mask = d_true.argsort()
 v_true = np.where(d_true, prod_vector, 'nulo')
-v_true = np.take_along_axis(v_true,true_sort_mask,axis=1).tolist()
+v_true = np.take_along_axis(v_true,true_sort_mask,axis=1)[:, [4, 3, 2, 1, 0]].tolist()
 
 d_pred = pred[product_list].to_numpy(copy = True)
 pred_sort_mask = d_pred.argsort()
 d2_pred = np.where(d_pred <= corte, 0, 1)
 v_pred = np.where(d2_pred, prod_vector, 'nulo')
-v_pred = np.take_along_axis(v_pred,pred_sort_mask,axis=1).tolist()
+v_pred = np.take_along_axis(v_pred,pred_sort_mask,axis=1)[:, [4, 3, 2, 1, 0]].tolist()
 
 np.where(XXXXXX <= corte, 0, 1)
 print('EL MAP5 en general es:'.format(mes), metrics.mapk(v_true, v_pred, 5), '\n\n')

@@ -16,8 +16,6 @@ trans = {}
 
 trans['A-A'] = pd.read_pickle('Datos/intermedia/base_tAA.pkl',
                               compression= 'zip')
-
-'''
 trans['B-B'] = pd.read_pickle('Datos/intermedia/base_tBB.pkl',
                               compression= 'zip')
 trans['C-D'] = pd.read_pickle('Datos/intermedia/base_tCD.pkl',
@@ -28,9 +26,6 @@ trans['E-E'] = pd.read_pickle('Datos/intermedia/base_tEE.pkl',
                               compression= 'zip')
 
 a = trans['A-A']
-
-'''
-
 #%% Lectura de Campañas y Comunicaciones
 
 campanas = pd.read_pickle('Datos/intermedia/campañas.pkl', compression= 'zip')
@@ -42,9 +37,8 @@ comunicaciones.drop(['Id_Producto', 'Tipo'], axis=1, inplace=True)
 
 #%% Merge
 
-
-
 mes_test = 202002
+target2 = {}
 
 for pt, data in trans.items():
     
@@ -76,7 +70,11 @@ for pt, data in trans.items():
     base.dropna().reset_index(inplace = True)
     '''
     base.to_csv(f'Datos/final/{pt}_base.csv',index=False)
+    '''
     
+    n_target = base[['id', 'Periodo']]
+    n_target[pt] = base.groupby('id')['P PT'].rolling(3).mean().shift(-3).reset_index(0,drop=True)
+    target2[pt] = n_target
     ## Train - Test
 
     train = base[base['Periodo']<mes_test]
@@ -84,44 +82,32 @@ for pt, data in trans.items():
     
     train.to_pickle('Datos/final/{}_train.pkl'.format(pt), compression= 'zip')
     test.to_pickle('Datos/final/{}_test.pkl'.format(pt), compression= 'zip')
-    '''
+    
 #%%
 
-#from imblearn.under_sampling import RandomUnderSampler
+ndata = target2['A-A'].merge(target2['B-B'],
+                             on = ['id', 'Periodo'],
+                             how = 'outer')
+ndata = ndata.merge(target2['C-D'],
+                             on = ['id', 'Periodo'],
+                             how = 'outer')
+ndata = ndata.merge(target2['D-E'],
+                             on = ['id', 'Periodo'],
+                             how = 'outer')
+ndata = ndata.merge(target2['E-E'],
+                             on = ['id', 'Periodo'],
+                             how = 'outer')
+
+ndata.sort_values(['id', 'Periodo'], inplace=True)
 #%%
-'''
-X_train = train.drop('NT', axis=1)
-y_train = train['NT']
+product_list = ['A-A',
+                'B-B',
+                'C-D',
+                'D-E',
+                'E-E']
 
-X_test = test.drop('NT', axis=1)
-y_test = test['NT']
-
-#%%
-
-rus = RandomUnderSampler(random_state=0)
-X_res, y_res = rus.fit_resample(X_train, y_train)
-
-rus = RandomUnderSampler(random_state=0)
-X_tres, y_tres = rus.fit_resample(X_test, y_test)
-#%%
-
-#from sklearn.linear_model import LogisticRegression
-
-#%%
-
-clf = LogisticRegression(random_state=0).fit(X_res, y_res)
-rf = RandomForestClassifier(max_depth=8, random_state=0).fit(X_res, y_res)
-#%%
-
-y_pred_logit = clf.predict(X_tres)
-y_pred_rf = rf.predict(X_tres)
-#%%
-
-print(confusion_matrix(y_tres, y_pred_logit))
-print(confusion_matrix(y_tres, y_pred_rf))
-
-print(clf.score(X_tres, y_tres))
-#%%
-
-u2.to_pickle('Datos/intermedia/union.pkl', compression= 'bz2')
-'''
+probs = ndata[product_list].reset_index(drop=True)
+sort_mask = probs.to_numpy(copy=True).argsort()
+compras = np.where(probs >0, 1, 0)
+compras = np.where(compras, np.array(product_list), 'nulo')
+compras_sorted = np.take_along_axis(compras,sort_mask,axis=1)[:, [4, 3, 2, 1, 0]]#.tolist()
