@@ -1,5 +1,12 @@
 files/input/Transaccion_test.csv
 files/input/Transaccion_train.csv
-*.csv
-
 files/input/union.pkl
+Datos/final/A-A_base.csv
+Datos/final/B-B_base.csv
+Datos/final/C-D_base.csv
+Datos/final/D-E_base.csv
+Datos/final/E-E_base.csv
+Datos/intermedia/campañas.csv
+Datos/raw/Transaccion_test.csv
+Datos/raw/Transaccion_train.csv
+*.csv
