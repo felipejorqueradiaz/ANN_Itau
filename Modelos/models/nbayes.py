@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 import numpy as np
 
@@ -5,6 +6,10 @@ from imblearn.under_sampling import RandomUnderSampler #Undersampling
 from sklearn.naive_bayes import GaussianNB #Model
 from sklearn.metrics import classification_report
 import ml_metrics
+#%% Carga de dataset
+path='C:/Users/Asus/Documents/GitHub/ANN_Itau'
+#path = 'C:/Users/Felipe/Documents/Github/ANN_Itau'
+os.chdir(path)
 #%%
 
 product_list = ['A-A',
