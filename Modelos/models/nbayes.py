@@ -6,6 +6,7 @@ from imblearn.under_sampling import RandomUnderSampler #Undersampling
 from sklearn.naive_bayes import GaussianNB #Model
 from sklearn.metrics import classification_report
 import ml_metrics as metrics
+import seaborn as sns
 #%% Carga de dataset
 path='C:/Users/Asus/Documents/GitHub/ANN_Itau'
 #path = 'C:/Users/Felipe/Documents/Github/ANN_Itau'
@@ -70,32 +71,42 @@ a=target.head()
 #%%
 
 prod_vector = np.array(product_list)
-corte = 0.5
+cortes = np.arange(0,1.01,0.05)
 
-
-for mes in pred.Periodo.unique():
-    real_temp = target[target['Periodo'] == mes].reset_index(drop=True)
-    list_true = real_temp['productos'].to_numpy(copy = True).tolist()
+values = []
+for corte in cortes:
+    for mes in pred.Periodo.unique():
+        real_temp = target[target['Periodo'] == mes].reset_index(drop=True)
+        list_true = real_temp['productos'].to_numpy(copy = True).tolist()
+        
+     
+        pred_temp = pred[pred['Periodo'] == mes]
+        d_pred = pred_temp[product_list].to_numpy(copy = True)
+        pred_sort_mask = d_pred.argsort()
+        d2_pred = np.where(d_pred <= corte, 0, 1)
+        v_pred = np.where(d2_pred, prod_vector, 'nulo')
+        v_pred = np.take_along_axis(v_pred,pred_sort_mask,axis=1)[:, [4, 3, 2, 1, 0]].tolist()
+        v_pred = [[valor for valor in lista if valor!='nulo'] for lista in v_pred]
+        valor = metrics.mapk(list_true, v_pred, 5)
+        print('EL MAP5 para el mes {} es:'.format(mes), valor)
+        values.append([corte, mes, valor])
     
- 
-    pred_temp = pred[pred['Periodo'] == mes]
+    
+    list_true = target.reset_index(drop=True)['productos'].to_numpy(copy = True).tolist()
+    
+    pred_temp = pred.copy()
     d_pred = pred_temp[product_list].to_numpy(copy = True)
     pred_sort_mask = d_pred.argsort()
     d2_pred = np.where(d_pred <= corte, 0, 1)
     v_pred = np.where(d2_pred, prod_vector, 'nulo')
     v_pred = np.take_along_axis(v_pred,pred_sort_mask,axis=1)[:, [4, 3, 2, 1, 0]].tolist()
     v_pred = [[valor for valor in lista if valor!='nulo'] for lista in v_pred]
-    print('EL MAP5 para el mes {} es:'.format(mes), metrics.mapk(list_true, v_pred, 5), '\n\n')
+    valor = metrics.mapk(list_true, v_pred, 5)
+    values.append([corte, 'general', valor])
+    print('EL MAP5 en general es:', valor)
 
+values = pd.DataFrame(values)
+values.columns = ['corte', 'periodo', 'map5']
+#%%
 
-list_true = target.reset_index(drop=True)['productos'].to_numpy(copy = True).tolist()
-
-pred_temp = pred.copy()
-d_pred = pred_temp[product_list].to_numpy(copy = True)
-pred_sort_mask = d_pred.argsort()
-d2_pred = np.where(d_pred <= corte, 0, 1)
-v_pred = np.where(d2_pred, prod_vector, 'nulo')
-v_pred = np.take_along_axis(v_pred,pred_sort_mask,axis=1)[:, [4, 3, 2, 1, 0]].tolist()
-v_pred = [[valor for valor in lista if valor!='nulo'] for lista in v_pred]
-#np.where(XXXXXX <= corte, 0, 1)
-print('EL MAP5 en general es:', metrics.mapk(list_true, v_pred, 5), '\n\n')
+sns.lineplot(data=values, x="corte", y="map5", hue="periodo")
