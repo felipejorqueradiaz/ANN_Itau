@@ -120,4 +120,8 @@ compras2 = [' '.join(row).replace('nulo','').replace('  ',' ').strip() for row i
 target_final = ndata[['id', 'Periodo']].copy()
 target_final['productos'] = compras2
 
-target_final.to_csv('Datos/final/Target.csv', index = False)
+target_final.to_json('Datos/final/Target.json')
+
+#%%
+
+t = pd.read_pickle('Datos/final/Target.pkl', compression= 'zip')
