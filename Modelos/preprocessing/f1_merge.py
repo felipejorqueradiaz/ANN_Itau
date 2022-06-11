@@ -77,9 +77,11 @@ for pt, data in trans.items():
 
     train = base[base['Periodo']<mes_test]
     test = base[(base['Periodo']<202005) & (base['Periodo']>=mes_test)]
+    val = base[base['Periodo']==202007]
     
     train.to_pickle('Datos/final/{}_train.pkl'.format(pt), compression= 'zip')
     test.to_pickle('Datos/final/{}_test.pkl'.format(pt), compression= 'zip')
+    val.to_pickle('Datos/final/{}_val.pkl'.format(pt), compression= 'zip')
     
 #%%
 

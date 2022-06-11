@@ -28,17 +28,19 @@ product_list = ['A-A',
 
 train = {}
 test = {}
-
+val = {}
 
 
 for prod in product_list:
     train[prod] = pd.read_pickle('Datos/final/{}_train.pkl'.format(prod), compression= 'zip')
     test[prod] = pd.read_pickle('Datos/final/{}_test.pkl'.format(prod), compression= 'zip')
+    val[prod] = pd.read_pickle('Datos/final/{}_val.pkl'.format(prod), compression= 'zip')
 
 #%%
 
 real = pd.DataFrame()
 pred = pd.DataFrame()
+valid = pd.DataFrame()
 
 for prod in product_list:
     rus = RandomUnderSampler(random_state=0)
@@ -60,14 +62,21 @@ for prod in product_list:
     
     pred[prod] = model.predict_proba(X_test).T[1]
     real[prod] = y_test
+    
+    
+    #VALIDACION
+    X_val = val[prod].drop(['id', 'Periodo', 'Target'], axis=1)
+    id_per_val = val[prod][['id']]
+    valid[prod] = model.predict_proba(X_test).T[1]
 
-# real = pd.concat([real, id_per], axis = 1, ignore_index=True)
+real = pd.concat([real, id_per], axis = 1, ignore_index=True)
 pred = pd.concat([pred, id_per.reset_index(drop = True)], axis = 1, ignore_index=True)
+valid = pd.concat([valid, id_per_val.reset_index(drop = True)], axis = 1, ignore_index=True)
 
-# real.columns = product_list + ['id', 'Periodo']
+real.columns = product_list + ['id', 'Periodo']
 pred.columns = product_list + ['id', 'Periodo']
-#%%
-a=target.head()
+valid.columns = product_list + ['id']
+
 #%%
 
 prod_vector = np.array(product_list)
@@ -110,3 +119,26 @@ values.columns = ['corte', 'periodo', 'map5']
 #%%
 
 sns.lineplot(data=values, x="corte", y="map5", hue="periodo")
+
+#%%
+
+corte = 0.5
+
+d_val = valid[product_list].to_numpy(copy = True)
+val_sort_mask = d_val.argsort()
+d2_val = np.where(d_val <= corte, 0, 1)
+
+v_val = np.where(d2_val, prod_vector, 'nulo')
+v_val = np.take_along_axis(v_val,val_sort_mask,axis=1)[:, [4, 3, 2, 1, 0]].tolist()
+v_val = [[valor for valor in lista if valor!='nulo'] for lista in v_val]
+final = [' '.join(row).strip() for row in v_val]
+
+#%%
+pred_final = valid['id'].copy()
+pred_final['productos'] = final
+
+pred_final.to_csv('Datos/output/Resultados.csv')
+
+#%%
+
+t = pd.read_pickle('Datos/final/Target.pkl', compression= 'zip')
