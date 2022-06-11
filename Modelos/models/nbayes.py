@@ -59,4 +59,17 @@ for prod in product_list:
 real = pd.concat([real, id_per], axis = 1, ignore_index=True)
 pred = pd.concat([pred, id_per.reset_index(drop = True)], axis = 1, ignore_index=True)
 
+real.columns = product_list + ['id', 'Periodo']
+pred.columns = product_list + ['id', 'Periodo']
 #%%
+
+corte = 0.5
+for mes in real.Periodo.unique():
+    d_true = real[real['Periodo'] == mes][product_list].to_numpy(copy = True)
+    d_pred = np.where(pred[pred['Periodo'] == mes][product_list].to_numpy(copy = True) <= corte, 0, 1)
+    print('EL MAP5 para el mes {} es:'.format(mes), metrics.wapk(d_true, d_pred, 5), '\n\n')
+
+
+d_true = real[product_list].to_numpy(copy = True)
+d_pred = np.where(pred[product_list].to_numpy(copy = True) <= corte, 0, 1)
+print('EL MAP5 en general es:'.format(mes), metrics.wapk(d_true, d_pred, 5), '\n\n')
