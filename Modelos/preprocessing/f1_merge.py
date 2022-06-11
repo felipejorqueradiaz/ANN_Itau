@@ -110,4 +110,14 @@ probs = ndata[product_list].reset_index(drop=True)
 sort_mask = probs.to_numpy(copy=True).argsort()
 compras = np.where(probs >0, 1, 0)
 compras = np.where(compras, np.array(product_list), 'nulo')
-compras_sorted = np.take_along_axis(compras,sort_mask,axis=1)[:, [4, 3, 2, 1, 0]]#.tolist()
+compras_sorted = np.take_along_axis(compras,sort_mask,axis=1)[:, [4, 3, 2, 1, 0]]
+
+#%%
+
+compras2 = [' '.join(row).replace('nulo','').replace('  ',' ').strip() for row in compras_sorted]
+
+#%%
+target_final = ndata[['id', 'Periodo']].copy()
+target_final['productos'] = compras2
+
+target_final.to_csv('Datos/final/Target.csv', index = False)
