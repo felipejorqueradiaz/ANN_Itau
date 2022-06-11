@@ -9,7 +9,10 @@ import ml_metrics
 #%% Carga de dataset
 path='C:/Users/Asus/Documents/GitHub/ANN_Itau'
 #path = 'C:/Users/Felipe/Documents/Github/ANN_Itau'
+
+
 os.chdir(path)
+# target= pd.read_pickle('Datos/final/Target.pkl', compression= 'zip')
 #%%
 
 product_list = ['A-A',
