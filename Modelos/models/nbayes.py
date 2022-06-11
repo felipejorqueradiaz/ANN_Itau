@@ -67,7 +67,7 @@ for prod in product_list:
     #VALIDACION
     X_val = val[prod].drop(['id', 'Periodo', 'Target'], axis=1)
     id_per_val = val[prod][['id']]
-    valid[prod] = model.predict_proba(X_test).T[1]
+    valid[prod] = model.predict_proba(X_val).T[1]
 
 real = pd.concat([real, id_per], axis = 1, ignore_index=True)
 pred = pd.concat([pred, id_per.reset_index(drop = True)], axis = 1, ignore_index=True)
@@ -119,7 +119,6 @@ values.columns = ['corte', 'periodo', 'map5']
 #%%
 
 plot=sns.lineplot(data=values, x="corte", y="map5", hue="periodo")
-plot.show()
 #%%
 
 corte = 0.5
@@ -134,10 +133,13 @@ v_val = [[valor for valor in lista if valor!='nulo'] for lista in v_val]
 final = [' '.join(row).strip() for row in v_val]
 
 #%%
-pred_final = valid['id'].copy()
-pred_final['productos'] = final
 
-pred_final.to_csv('Datos/output/Resultados.csv')
+pred_final = pd.DataFrame()
+pred_final['id']=valid['id'].copy()
+pred_final['productos'] = final
+pred_final['id']=pred_final['id'].astype(np.int64)
+pred_final=pred_final.fillna(" ")
+pred_final.to_csv('Datos/output/Resultados.csv',index=False)
 
 #%%
 
