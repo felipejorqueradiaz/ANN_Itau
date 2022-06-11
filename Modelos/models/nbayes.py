@@ -5,7 +5,7 @@ import numpy as np
 from imblearn.under_sampling import RandomUnderSampler #Undersampling
 from sklearn.naive_bayes import GaussianNB #Model
 from sklearn.metrics import classification_report
-import ml_metrics
+import ml_metrics as metrics
 #%% Carga de dataset
 path='C:/Users/Asus/Documents/GitHub/ANN_Itau'
 #path = 'C:/Users/Felipe/Documents/Github/ANN_Itau'
@@ -63,13 +63,13 @@ real.columns = product_list + ['id', 'Periodo']
 pred.columns = product_list + ['id', 'Periodo']
 #%%
 
-corte = 0.5
+corte = 0.8
 for mes in real.Periodo.unique():
-    d_true = real[real['Periodo'] == mes][product_list].to_numpy(copy = True)
-    d_pred = np.where(pred[pred['Periodo'] == mes][product_list].to_numpy(copy = True) <= corte, 0, 1)
-    print('EL MAP5 para el mes {} es:'.format(mes), metrics.wapk(d_true, d_pred, 5), '\n\n')
+    d_true = real[real['Periodo'] == mes][product_list].to_numpy(copy = True).tolist()
+    d_pred = np.where(pred[pred['Periodo'] == mes][product_list].to_numpy(copy = True) <= corte, 0, 1).tolist()
+    print('EL MAP5 para el mes {} es:'.format(mes), metrics.mapk(d_true, d_pred, 5), '\n\n')
 
 
-d_true = real[product_list].to_numpy(copy = True)
-d_pred = np.where(pred[product_list].to_numpy(copy = True) <= corte, 0, 1)
-print('EL MAP5 en general es:'.format(mes), metrics.wapk(d_true, d_pred, 5), '\n\n')
+d_true = real[product_list].to_numpy(copy = True).tolist()
+d_pred = np.where(pred[product_list].to_numpy(copy = True) <= corte, 0, 1).tolist()
+print('EL MAP5 en general es:'.format(mes), metrics.mapk(d_true, d_pred, 5), '\n\n')
