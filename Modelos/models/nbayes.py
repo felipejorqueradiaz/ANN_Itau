@@ -118,8 +118,8 @@ values = pd.DataFrame(values)
 values.columns = ['corte', 'periodo', 'map5']
 #%%
 
-sns.lineplot(data=values, x="corte", y="map5", hue="periodo")
-
+plot=sns.lineplot(data=values, x="corte", y="map5", hue="periodo")
+plot.show()
 #%%
 
 corte = 0.5
