@@ -9,7 +9,7 @@ import ml_metrics as metrics
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 warnings.simplefilter(action='ignore', category=DeprecationWarning)
-
+from tensorflow import keras
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.callbacks import TensorBoard
@@ -17,6 +17,7 @@ from keras.callbacks import TensorBoard
 from keras.callbacks import EarlyStopping
 ########################################
 from tensorflow.keras.optimizers import Adam
+
 
 
 #%% Carga de dataset
@@ -97,7 +98,7 @@ for i in lr_to_test:
                    callbacks=[cb]
                    )
 
-        path = f'./modelo2{prod}lr{i}.h5'
+        path = f'./modelo433{prod}lr{i}.h5'
         model1.save(path)
     
 #%% Predecimos variables, las unicmos en un dataset y obtenemos métricas
@@ -212,6 +213,8 @@ pred_final['productos'] = final
 pred_final['id']=pred_final['id'].astype(np.int64)
 pred_final=pred_final.fillna(" ")
 pred_final.to_csv('Resultados/redneuronal.csv',index=False)
+#%%
+
 
     
 
