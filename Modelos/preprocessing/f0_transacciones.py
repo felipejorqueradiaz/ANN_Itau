@@ -40,7 +40,7 @@ del df['Tipo']
 
 df.Monto = df.Monto.abs() #Asumimos que los negativos son mal punteados
 print(df.columns)
-df.to_csv('Datos/raw/Transaccion_bi.csv',index=False)
+# df.to_csv('Datos/raw/Transaccion_bi.csv',index=False)
 df['Signo'] = df['Signo'].replace(['Negativo','Positivo',np.nan],[-1,1,0])
 df['Target']=1
 bipbop()
@@ -97,18 +97,35 @@ for i in data_enumerate.keys():
 
 
 bipbop()
-#%% Unimos los dataset con las variables base
+#%%
+
 df=new_data["P_201901"]
+
+
 for filename in periodos:
     print(filename)
     if filename==201901:
+
         print('se lo saltó')
+
     else:
+
         df=pd.concat([df, new_data[f"P_{filename}"]], ignore_index=True)
         
-del new_data
+#%%    
+ttmes={}    
+dfi=df[['id', 'TotalTMes','Periodo']]
+for filename in periodos:
+    ttmes[f'{filename}']=dfi[dfi.Periodo==filename]
+    ttmes[f'{filename}']=ttmes[f'{filename}'].drop_duplicates(keep='first')
+    del ttmes[f'{filename}']['Periodo']
+
+
+# del new_data
+del dfi
 #df.to_pickle('Datos/intermedia/transacciones.pkl', compression= 'zip')
 bipbop()
+a=ttmes['201904']
 
 #%% Creamos dataset con periodos e ids para obtener target
 
@@ -117,19 +134,28 @@ b1= pd.DataFrame({'id': np.repeat(ids,len(periodos)),
 
 bipbop()
 
+
 #%% Preparación dataset por product-tipo
+
+
 
 def preparacion(tipo,diccionario):
     estracto=df[df['Producto-Tipo']==tipo]
     dataset=pd.merge(b1,estracto,on=['id','Periodo'],how='left')#N° transacciones mes anterior
+    del dataset['TotalTMes']
     for x in periodos:
         diccionario[f"P_{x}"]=dataset.loc[(dataset.Periodo ==x)]
+        diccionario[f"P_{x}"]=pd.merge(diccionario[f"P_{x}"],ttmes[f'{x}'],on='id',how='left')#
+        print(tipo,x)
         diccionario[f"P_{x}"].loc[:, ['Producto-Tipo']]=tipo
         diccionario[f"P_{x}"].loc[:, ['id-producto-tipo']]=diccionario[f"P_{x}"]['id'].astype(str)+"-"+diccionario[f"P_{x}"]['Producto-Tipo']
+        
+        
     return diccionario
 #Para el tipo 'A-A'
 AA={}
 data_a=preparacion('A-A',AA)
+
 #Para el tipo 'B-B'
 BB={}
 data_b=preparacion('B-B',BB)
@@ -262,11 +288,6 @@ bipbop()
 
 #%%  Pasamos ese aumento en transacciones a cambio porcentual
 
-a_data_a=copy.deepcopy(data_a)
-a_data_b=copy.deepcopy(data_b)
-a_data_c=copy.deepcopy(data_c)
-a_data_d=copy.deepcopy(data_d)
-a_data_e=copy.deepcopy(data_e)
 def cambio_porcentual_ntrans(j,dataset):
     '''
     j: Es para obtener cuanto, en porcentaje, aumentaron las transacciones del periodo j respecto al periodo j+1.
@@ -318,6 +339,8 @@ for filename in periodos:
     else:
         aa=pd.concat([aa, data_a[f"P_{filename}"]], ignore_index=True)
 
+
+#%%
 del aa['Producto-Tipo']
 del aa['id-producto-tipo']
 #Quitamos n primeros periodos
@@ -327,7 +350,7 @@ for i in range(1,n+1):
 
 aa.to_pickle('Datos/intermedia/base_tAA.pkl', compression= 'zip')
 
-del aa
+# del aa
 
 bb=data_b["P_201901"]
 for filename in periodos:
@@ -342,7 +365,7 @@ for i in range(1,n+1):
     bb = bb[bb.Periodo != int(f'20190{i}')]
 bb.to_pickle('Datos/intermedia/base_tBB.pkl', compression= 'zip')
 
-del bb
+# del bb
 
 cc=data_c["P_201901"]
 for filename in periodos:
@@ -357,7 +380,7 @@ for i in range(1,n+1):
     cc = cc[cc.Periodo != int(f'20190{i}')]
 cc.to_pickle('Datos/intermedia/base_tCD.pkl', compression= 'zip')
 
-del cc
+# del cc
 
 dd=data_d["P_201901"]
 for filename in periodos:
@@ -372,7 +395,7 @@ for i in range(1,n+1):
     dd = dd[dd.Periodo != int(f'20190{i}')]
 dd.to_pickle('Datos/intermedia/base_tDE.pkl', compression= 'zip')
 
-del dd
+# del dd
 
 ee=data_e["P_201901"]
 for filename in periodos:
@@ -390,3 +413,4 @@ ee.to_pickle('Datos/intermedia/base_tEE.pkl', compression= 'zip')
 
 
 bipbop()
+
