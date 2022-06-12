@@ -52,7 +52,8 @@ for prod in product_list:
     
     X_train_us, y_train_us = rus.fit_resample(X, y)
     
-    model = make_pipeline(StandardScaler(), LogisticRegression(random_state=0))
+    #model = make_pipeline(StandardScaler(), LogisticRegression(random_state=0))
+    model = LogisticRegression(random_state=0, max_iter=400)
     model.fit(X_train_us, y_train_us)
     
     X_test = test[prod].drop(['id', 'Periodo', 'Target'], axis=1)

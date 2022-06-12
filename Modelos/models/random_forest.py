@@ -50,7 +50,7 @@ for prod in product_list:
     
     X_train_us, y_train_us = rus.fit_resample(X, y)
     
-    model = RandomForestClassifier(max_depth=10, random_state=0)
+    model = RandomForestClassifier(max_depth=3, random_state=0,n_estimators = 200)
     model.fit(X_train_us, y_train_us)
     
     X_test = test[prod].drop(['id', 'Periodo', 'Target'], axis=1)
