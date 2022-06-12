@@ -33,7 +33,7 @@ campanas.drop(['dataset', 'Id_Producto', 'Tipo'], axis=1, inplace=True)
 comunicaciones = pd.read_pickle('Datos/intermedia/comunicaciones.pkl', compression= 'zip')
 comunicaciones.drop(['Id_Producto', 'Tipo'], axis=1, inplace=True)
 
-
+consumidores = pd.read_pickle('Datos/intermedia/consumidores.pkl', compression= 'zip')
 #%% Merge
 
 mes_test = 202002
@@ -55,6 +55,8 @@ for pt, data in trans.items():
             .drop('Producto-Tipo', axis=1),
         how='left'
         )
+    
+    base = base.merge(consumidores, how='left', on='id')
     
     base.fillna(0, inplace=True)
     
