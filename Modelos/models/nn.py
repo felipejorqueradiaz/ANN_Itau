@@ -67,7 +67,9 @@ def MiRed(n_features):
     return model
 
 #%% Entrenamiento de modelos
+import tensorflow as tf
 
+#%%
 
 lr_to_test = [ 0.01, 0.1, 1, 10]  #tres tasas de aprendizaje diferentes, una pequeña, mediana y grande
 
@@ -90,7 +92,7 @@ for i in lr_to_test:
         cb =EarlyStopping(monitor='loss', mode='min', verbose=1, patience=5)
         model1 = MiRed(n_features)
         model1.summary()
-        adam = Adam(lr=i)
+        adam = Adam(learning_rate=i)
         model1.compile(optimizer= adam,loss='mean_squared_error', metrics=['accuracy'])
         model1.fit(X_train_us,y_train_us
                    , epochs=100
@@ -121,7 +123,7 @@ for prod in product_list:
     # file_to_read = open(f"./modelo1{prod}.pickle", "rb")
     # model1 = pickle.load(file_to_read)
     # file_to_read.close()
-    model1 = keras.models.load_model(f'./model1{prod}.h5')
+    model1 = keras.models.load_model(f'./modelo433{prod}lr0.01.h5')
 
 
     y_pred1 = model1.predict(X_test) 
@@ -210,9 +212,10 @@ final = [' '.join(row).strip() for row in v_val]
 pred_final = pd.DataFrame()
 pred_final['id']=valid['id'].copy()
 pred_final['productos'] = final
+
 pred_final['id']=pred_final['id'].astype(np.int64)
 pred_final=pred_final.fillna(" ")
-pred_final.to_csv('Resultados/redneuronal.csv',index=False)
+pred_final.to_csv('Resultados/redneuronal433lr001.csv',index=False)
 #%%
 
 
