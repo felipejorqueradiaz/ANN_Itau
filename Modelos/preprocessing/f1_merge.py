@@ -2,6 +2,7 @@ import os
 import pandas as pd
 import numpy as np
 import pickle
+from sklearn.preprocessing import StandardScaler
  
 #%% Carga de dataset
 path='C:/Users/Asus/Documents/GitHub/ANN_Itau'
@@ -66,9 +67,13 @@ for pt, data in trans.items():
     base['Target'] = base.groupby('id')['Compra'].rolling(3).max().shift(-3).reset_index(0,drop=True)
     
     base.dropna().reset_index(inplace = True)
+    
+    
     '''
     base.to_csv(f'Datos/final/{pt}_base.csv',index=False)
     '''
+    scalador=StandardScaler()
+    base['Monto']=scalador.fit_transform(base[['Monto']])
     
     n_target = base[['id', 'Periodo']]
     n_target[pt] = base.groupby('id')['P PT'].rolling(3).max().shift(-3).reset_index(0,drop=True)
