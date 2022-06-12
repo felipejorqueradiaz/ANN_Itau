@@ -16,7 +16,8 @@ from keras.callbacks import TensorBoard
 ## Ahora se calcula la matriz de confusion
 from keras.callbacks import EarlyStopping
 ########################################
-from tensorflow import keras
+from tensorflow.keras.optimizers import Adam
+
 
 #%% Carga de dataset
 path='C:/Users/Asus/Documents/GitHub/ANN_Itau'
@@ -44,17 +45,19 @@ for prod in product_list:
 
 
 #%% Creación de red
+# Modelo1: 10, 8 ,8
+# Modelo2:4,3,3
 
 def MiRed(n_features):
     model = Sequential()
 
     ## Adicionalmente, una capa de tipo 'Dense' es como lo que hemos visto en clase
     ## Donde TODAS las neuronas de una capa se conectan con TODAS las neuronas de la siguiente capa
-    model.add(Dense(10, activation='relu',input_shape=(n_features,)))
+    model.add(Dense(4, activation='relu',input_shape=(n_features,)))
     ## Esta es la segunda capa, tiene 100 neuronas, pero no es necesario especificar cuantas columnas entran.
-    model.add(Dense(8, activation='relu')) 
+    model.add(Dense(3, activation='relu')) 
     
-    model.add(Dense(8, activation='relu')) 
+    model.add(Dense(3, activation='relu')) 
 
     
     ## Finalmente la capa de salida tiene solo una neurona, sin FA.
@@ -62,9 +65,46 @@ def MiRed(n_features):
     
     return model
 
-
 #%% Entrenamiento de modelos
 
+
+lr_to_test = [ 0.01, 0.1, 1, 10]  #tres tasas de aprendizaje diferentes, una pequeña, mediana y grande
+
+
+for i in lr_to_test:
+    for prod in product_list:
+        rus = RandomUnderSampler(random_state=0)
+    
+        X = train[prod].drop(['id', 'Periodo', 'Target'], axis=1)
+        y = train[prod]['Target']
+        
+        X_train_us, y_train_us = rus.fit_resample(X, y)
+        
+        X_test = test[prod].drop(['id', 'Periodo', 'Target'], axis=1)
+        y_test = test[prod]['Target']
+        id_per = test[prod][['id', 'Periodo']]
+    
+        print(f"Modelo {prod} lr {i}\n")
+        n_features = X.shape[1]
+        cb =EarlyStopping(monitor='loss', mode='min', verbose=1, patience=5)
+        model1 = MiRed(n_features)
+        model1.summary()
+        adam = Adam(lr=i)
+        model1.compile(optimizer= adam,loss='mean_squared_error', metrics=['accuracy'])
+        model1.fit(X_train_us,y_train_us
+                   , epochs=100
+                   , verbose=1,
+                   callbacks=[cb]
+                   )
+
+        path = f'./modelo2{prod}lr{i}.h5'
+        model1.save(path)
+    
+#%% Predecimos variables, las unicmos en un dataset y obtenemos métricas
+real = pd.DataFrame()
+pred = pd.DataFrame()
+valid = pd.DataFrame()                    
+### Genero la predicción con el modelo
 
 for prod in product_list:
     rus = RandomUnderSampler(random_state=0)
@@ -77,44 +117,28 @@ for prod in product_list:
     X_test = test[prod].drop(['id', 'Periodo', 'Target'], axis=1)
     y_test = test[prod]['Target']
     id_per = test[prod][['id', 'Periodo']]
-    
-    print(f"Modelo {prod}\n")
-    n_features = X.shape[1]
-    cb =EarlyStopping(monitor='loss', mode='min', verbose=1, patience=5)
-    print("Modelo 1\n")
-    model1 = MiRed(n_features)
-    model1.summary()
-    model1.compile(optimizer='adam',loss='mean_squared_error', metrics=['accuracy'])
-    model1.fit(X_train_us,y_train_us
-          , epochs=100
-          , verbose=1,
-          callbacks=[cb]
-          )
-    model1.save(f'/Modelos/models/modelo1{prod}.h5')
-    
-#%%       
-real = pd.DataFrame()
-pred = pd.DataFrame()
-valid = pd.DataFrame()                    
-### Genero la predicción con el modelo
-for prod in product_list:
-    model1 = keras.models.load_model('f/Modelos/models/modelo1{prod}.h5')
+    # file_to_read = open(f"./modelo1{prod}.pickle", "rb")
+    # model1 = pickle.load(file_to_read)
+    # file_to_read.close()
+    model1 = keras.models.load_model(f'./model1{prod}.h5')
+
+
     y_pred1 = model1.predict(X_test) 
     ya=y_pred1
 
     pred[prod] = y_pred1.tolist()
     pred[prod] = pred[prod].str[0]
-    
-    y_pred1[y_pred1<0.5]=0
-    y_pred1[y_pred1>=0.5]=1
-    print('-----------\nPRODUCTO {}\n'.format(prod),classification_report(y_test, y_pred1),'\n\n')
     real[prod] = y_test
     
     #VALIDACION
     X_val = val[prod].drop(['id', 'Periodo', 'Target'], axis=1)
     id_per_val = val[prod][['id']]
     valid[prod] = model1.predict(X_test).tolist()   #trasponer?
+    valid[prod] = valid[prod].str[0]
     
+    y_pred1[y_pred1<0.5]=0
+    y_pred1[y_pred1>=0.5]=1
+    print('-----------\nPRODUCTO {}\n'.format(prod),classification_report(y_test, y_pred1),'\n\n')
     
 #%%
 real = pd.concat([real, id_per], axis = 1, ignore_index=True)
@@ -187,40 +211,7 @@ pred_final['id']=valid['id'].copy()
 pred_final['productos'] = final
 pred_final['id']=pred_final['id'].astype(np.int64)
 pred_final=pred_final.fillna(" ")
-pred_final.to_csv('Resultados/NaibeBayes.csv',index=False)
-#%%
-
-#Importamos librerias necesarias.
-from keras.optimizers import SGD, Adam
-
-## Ejecutare 3 redes neuronales identicas en capas y nodos. Invocando MiRed()
-## Pero la optimizaremos usando el Grandiente Descendente Estocastico (SGD en ingles)
-## Es a este operador al que uno le entrega la Tasa de Aprendizaje (Learning Rate)
-## Otro ejemplo creando un optimizador usando Adam
-adam = Adam(lr=0.01)
-
-lr_to_test = [ .000001,  0.01, 0.1, 1, 10]  #tres tasas de aprendizaje diferentes, una pequeña, mediana y grande
-
-
-## 1) Que cree que ocurriria si algun peso es mayor que 1??
-
-for alfa in lr_to_test:
-    print('\nProbando el modelo with learning rate: %f\n'%alfa )
-    modelo = MiRed() ## creo una red limpia. 
-    
-    my_optimizer = SGD(lr = alfa) ##metodo de optimizacion
-    
-    modelo.compile(optimizer=my_optimizer,loss='mean_squared_error',metrics=['accuracy'])
-    
-    #results = modelo.fit(X_train, Y_train, epochs=1000, verbose=0)
-    results = modelo.fit(X_train_us,y_train_us, epochs=100, verbose=0)
-    
-        
-    print("Train-Accuracy: {:.2%}".format(np.mean(results.history["accuracy"][-11:-1])),"+/- {:.6%}".format(np.std(results.history["accuracy"][-11:-1])))
-    print("Train-Loss: {:.2%}".format(np.mean(results.history["loss"][-11:-1])),"+/- {:.6%}".format(np.std(results.history["loss"][-11:-1])))
-
-
-
+pred_final.to_csv('Resultados/redneuronal.csv',index=False)
 
     
 
