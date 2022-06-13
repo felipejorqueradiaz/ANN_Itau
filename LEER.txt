@@ -1,0 +1,7 @@
+Hola!
+
+1 Para que funcionen los modelos es necesario cambiar el path. :D
+2 La data original debe estar en "Datos/raw"
+
+Un saludo,
+Constanza y Felipe
