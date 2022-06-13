@@ -46,19 +46,21 @@ for prod in product_list:
 
 
 #%% Creación de red
+#Se pobará con 3 distintos tipos de modelos:
 # Modelo1: 10, 8 ,8
 # Modelo2:4,3,3
+# Modelo 3: 5 5
 
 def MiRed(n_features):
     model = Sequential()
 
     ## Adicionalmente, una capa de tipo 'Dense' es como lo que hemos visto en clase
     ## Donde TODAS las neuronas de una capa se conectan con TODAS las neuronas de la siguiente capa
-    model.add(Dense(4, activation='relu',input_shape=(n_features,)))
+    model.add(Dense(10, activation='relu',input_shape=(n_features,)))
     ## Esta es la segunda capa, tiene 100 neuronas, pero no es necesario especificar cuantas columnas entran.
-    model.add(Dense(3, activation='relu')) 
+    model.add(Dense(8, activation='relu')) 
     
-    model.add(Dense(3, activation='relu')) 
+    model.add(Dense(8, activation='relu')) 
 
     
     ## Finalmente la capa de salida tiene solo una neurona, sin FA.
@@ -66,13 +68,12 @@ def MiRed(n_features):
     
     return model
 
-#%% Entrenamiento de modelos
-import tensorflow as tf
 
-#%%
+#%% Ahora vamos a entrenar y guardar las redes, con distintas tasas de aprendizaje
 
-lr_to_test = [ 0.01, 0.1, 1, 10]  #tres tasas de aprendizaje diferentes, una pequeña, mediana y grande
 
+lr_to_test = [ 0.1]  #tres tasas de aprendizaje diferentes, una pequeña, mediana y grande
+#0.01,  10
 
 for i in lr_to_test:
     for prod in product_list:
@@ -92,7 +93,7 @@ for i in lr_to_test:
         cb =EarlyStopping(monitor='loss', mode='min', verbose=1, patience=5)
         model1 = MiRed(n_features)
         model1.summary()
-        adam = Adam(learning_rate=i)
+        adam = Adam()
         model1.compile(optimizer= adam,loss='mean_squared_error', metrics=['accuracy'])
         model1.fit(X_train_us,y_train_us
                    , epochs=100
@@ -100,7 +101,7 @@ for i in lr_to_test:
                    callbacks=[cb]
                    )
 
-        path = f'./modelo433{prod}lr{i}.h5'
+        path = f'./modelo1088{prod}Adam.h5'
         model1.save(path)
     
 #%% Predecimos variables, las unicmos en un dataset y obtenemos métricas
@@ -123,7 +124,7 @@ for prod in product_list:
     # file_to_read = open(f"./modelo1{prod}.pickle", "rb")
     # model1 = pickle.load(file_to_read)
     # file_to_read.close()
-    model1 = keras.models.load_model(f'./modelo433{prod}lr0.01.h5')
+    model1 = keras.models.load_model(f'./modelo1088{prod}Adam.h5')
 
 
     y_pred1 = model1.predict(X_test) 
@@ -136,14 +137,14 @@ for prod in product_list:
     #VALIDACION
     X_val = val[prod].drop(['id', 'Periodo', 'Target'], axis=1)
     id_per_val = val[prod][['id']]
-    valid[prod] = model1.predict(X_test).tolist()   #trasponer?
+    valid[prod] = model1.predict(X_val).tolist()  
     valid[prod] = valid[prod].str[0]
     
     y_pred1[y_pred1<0.5]=0
     y_pred1[y_pred1>=0.5]=1
     print('-----------\nPRODUCTO {}\n'.format(prod),classification_report(y_test, y_pred1),'\n\n')
-    
-#%%
+
+#%% Añadimos id y periodo a los resultados
 real = pd.concat([real, id_per], axis = 1, ignore_index=True)
 pred = pd.concat([pred, id_per.reset_index(drop = True)], axis = 1, ignore_index=True)
 valid = pd.concat([valid, id_per_val.reset_index(drop = True)], axis = 1, ignore_index=True)
@@ -152,7 +153,8 @@ real.columns = product_list + ['id', 'Periodo']
 pred.columns = product_list + ['id', 'Periodo']
 valid.columns = product_list + ['id']
 
-#%%
+
+#%% Obtenemos el mapk según distintos puntos de corte
 
 prod_vector = np.array(product_list)
 cortes = np.arange(0,1.01,0.05)
@@ -191,10 +193,10 @@ for corte in cortes:
 
 values = pd.DataFrame(values)
 values.columns = ['corte', 'periodo', 'map5']
-#%%
+#%% plot
 import seaborn as sns
 plot=sns.lineplot(data=values, x="corte", y="map5", hue="periodo")
-#%%
+#%% f1 El presume que el punto de corte más representativo es 0.5
 
 corte = 0.5
 
@@ -207,7 +209,7 @@ v_val = np.take_along_axis(v_val,val_sort_mask,axis=1)[:, [4, 3, 2, 1, 0]].tolis
 v_val = [[valor for valor in lista if valor!='nulo'] for lista in v_val]
 final = [' '.join(row).strip() for row in v_val]
 
-#%%
+#%% Guardamos resultado de modelo
 
 pred_final = pd.DataFrame()
 pred_final['id']=valid['id'].copy()
@@ -215,7 +217,7 @@ pred_final['productos'] = final
 
 pred_final['id']=pred_final['id'].astype(np.int64)
 pred_final=pred_final.fillna(" ")
-pred_final.to_csv('Resultados/redneuronal433lr001.csv',index=False)
+pred_final.to_csv('Resultados/redneuronal1088adam.csv',index=False)
 #%%
 
 
