@@ -18,6 +18,7 @@ df_train = pd.read_csv('Datos/raw/Transaccion_train.csv', index_col=0) #Hacer un
 df_test = pd.read_csv('Datos/raw/Transaccion_test.csv', index_col=0) #Hacer un acumulativo de montos o trANSSACCIONES
 
 
+
 df = pd.concat([df_train, df_test], ignore_index=True)
 del df_train
 del df_test 
@@ -28,6 +29,8 @@ df.Monto = pd.to_numeric(df.Monto)
 ids= df['id'].unique()
 
 bipbop()
+
+
 #%% Limpieza:
 # Luego del EDA se realiza la siguiente limpieza de los datos:
     # Se quita Fecha
@@ -39,8 +42,11 @@ del df['Id_Producto']
 del df['Tipo']   
 
 df.Monto = df.Monto.abs() #Asumimos que los negativos son mal punteados
+df.Monto= df.Monto.astype(int)
 print(df.columns)
-# df.to_csv('Datos/raw/Transaccion_bi.csv',index=False)
+df.to_csv('Datos/raw/Transaccion_bi.csv',index=False)
+
+#%%
 df['Signo'] = df['Signo'].replace(['Negativo','Positivo',np.nan],[-1,1,0])
 df['Target']=1
 bipbop()

@@ -77,6 +77,7 @@ real.columns = product_list + ['id', 'Periodo']
 pred.columns = product_list + ['id', 'Periodo']
 valid.columns = product_list + ['id']
 
+
 #%%
 
 prod_vector = np.array(product_list)
