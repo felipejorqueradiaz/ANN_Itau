@@ -8,10 +8,12 @@ from sklearn.metrics import classification_report
 import ml_metrics as metrics
 import seaborn as sns
 #%% Carga de dataset
-path='C:/Users/Asus/Documents/GitHub/ANN_Itau'
+#%% Creación de path ..
+
+#### PONER EL PATH A LA CARPETA MADRE ACÁ
+
+#path='C:/Users/Asus/Documents/GitHub/ANN_Itau/'
 #path = 'C:/Users/Felipe/Documents/Github/ANN_Itau'
-
-
 os.chdir(path)
 
 target= pd.read_pickle('Datos/final/Target.pkl', compression= 'zip')

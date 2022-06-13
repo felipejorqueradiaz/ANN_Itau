@@ -2,11 +2,12 @@
 import pandas as pd
 import os
 #%% Creación de path ..
-print('Antes:',os.getcwd())
-path='C:/Users/Asus/Documents/GitHub/ANN_Itau/'
+
+#### PONER EL PATH A LA CARPETA MADRE ACÁ
+
+#path='C:/Users/Asus/Documents/GitHub/ANN_Itau/'
 #path = 'C:/Users/Felipe/Documents/Github/ANN_Itau'
 os.chdir(path)
-print('desp:',os.getcwd())#os.listdir()
 
 #%% Carga de datos
 
@@ -31,6 +32,7 @@ df = df.sort_values(['id', 'Periodo'],ascending = [True, True])
 del df_train
 del df_test
 #%% Acumulado comunicaciones
+
 df.drop(['Fecha', 'Tipo_comunicacion'], axis=1, inplace=True)
 df = df.groupby(['id', 'Periodo','Id_Producto', 'Tipo', 'Producto-Tipo'],
                 as_index=False).agg({'Lectura': ['sum','count']})

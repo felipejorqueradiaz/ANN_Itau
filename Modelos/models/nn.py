@@ -21,15 +21,22 @@ from tensorflow.keras.optimizers import Adam
 
 
 #%% Carga de dataset
-path='C:/Users/Asus/Documents/GitHub/ANN_Itau'
+#%% Creación de path ..
+
+#### PONER EL PATH A LA CARPETA MADRE ACÁ
+
+#path='C:/Users/Asus/Documents/GitHub/ANN_Itau/'
 #path = 'C:/Users/Felipe/Documents/Github/ANN_Itau'
+os.chdir(path)
+
+
 product_list = ['A-A',
                 'B-B',
                 'C-D',
                 'D-E',
                 'E-E']
 
-os.chdir(path)
+
 
 target= pd.read_pickle('Datos/final/Target.pkl', compression= 'zip')
 

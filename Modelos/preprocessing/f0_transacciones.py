@@ -7,9 +7,13 @@ periodos=[201901, 201902, 201903, 201904, 201905, 201906, 201907,201908, 201909,
           202001, 202002, 202003,202004, 202005, 202006, 202007,202008, 202009, 202010, 202011] #Para iterar
 n=3
 #%% Creación de path ..
-path='C:/Users/Asus/Documents/GitHub/ANN_Itau/'
+
+#### PONER EL PATH A LA CARPETA MADRE ACÁ
+
+#path='C:/Users/Asus/Documents/GitHub/ANN_Itau/'
 #path = 'C:/Users/Felipe/Documents/Github/ANN_Itau'
 os.chdir(path)
+
 from Modelos.functions.utils import bipbop
 
 #%% OBTENER DATASET ORIGINAL, MEZLCAMOS TRAIN Y TEST

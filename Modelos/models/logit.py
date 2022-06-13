@@ -10,10 +10,12 @@ from sklearn.metrics import classification_report
 import ml_metrics as metrics
 import seaborn as sns
 #%% Carga de dataset
-path='C:/Users/Asus/Documents/GitHub/ANN_Itau'
+#%% Creación de path ..
+
+#### PONER EL PATH A LA CARPETA MADRE ACÁ
+
+#path='C:/Users/Asus/Documents/GitHub/ANN_Itau/'
 #path = 'C:/Users/Felipe/Documents/Github/ANN_Itau'
-
-
 os.chdir(path)
 
 target= pd.read_pickle('Datos/final/Target.pkl', compression= 'zip')
@@ -38,7 +40,7 @@ for prod in product_list:
     test[prod] = pd.read_pickle('Datos/final/{}_test.pkl'.format(prod), compression= 'zip')
     val[prod] = pd.read_pickle('Datos/final/{}_val.pkl'.format(prod), compression= 'zip')
 
-#%%
+#%% GENERAMOS MODELO
 
 real = pd.DataFrame()
 pred = pd.DataFrame()
@@ -72,6 +74,8 @@ for prod in product_list:
     id_per_val = val[prod][['id']]
     valid[prod] = model.predict_proba(X_val).T[1]
 
+
+#GUARDAMOS LOS RESULTADOS
 real = pd.concat([real, id_per], axis = 1, ignore_index=True)
 pred = pd.concat([pred, id_per.reset_index(drop = True)], axis = 1, ignore_index=True)
 valid = pd.concat([valid, id_per_val.reset_index(drop = True)], axis = 1, ignore_index=True)
@@ -82,6 +86,7 @@ valid.columns = product_list + ['id']
 
 #%%
 
+#TESTEAMOS CON DISTINTOS CORTES
 prod_vector = np.array(product_list)
 cortes = np.arange(0,1.01,0.05)
 

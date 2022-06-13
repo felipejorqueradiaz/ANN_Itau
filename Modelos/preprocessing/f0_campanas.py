@@ -3,9 +3,13 @@ import numpy as np
 import os
 
 #%% Carga de Datos
+
 print(os.getcwd())
+
+#### PONER EL PATH A LA CARPETA MADRE ACÁ
+
 #path = 'C:/Users/Felipe/Documents/Github/ANN_Itau'
-path='C:/Users/Asus/Documents/GitHub/ANN_Itau'
+#path='C:/Users/Asus/Documents/GitHub/ANN_Itau'
 
 os.chdir(path)
 

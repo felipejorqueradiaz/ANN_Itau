@@ -71,8 +71,8 @@ for pt, data in trans.items():
     base.dropna().reset_index(inplace = True)
     
     
-    
-    base.to_csv(f'Datos/final/{pt}_base.csv',index=False)
+    # ACÁ SE GENERAN LOS DATOS PARA EL PANEL DE POWER BI
+    #base.to_csv(f'Datos/final/{pt}_base.csv',index=False)
     
     scalador=StandardScaler()
     base['Monto']=scalador.fit_transform(base[['Monto']])
@@ -91,6 +91,10 @@ for pt, data in trans.items():
     val.to_pickle('Datos/final/{}_val.pkl'.format(pt), compression= 'zip')
     
 #%%
+
+# ACÁ GENERAMOS UN ARCHIVO FINAL PILOTO DE TESTEO
+# SINCERAMENTE, NO SIRVE DE NADA, PERO QUERIAMOS VER SI FUNCIONABA EL MAPE
+# RECOMENDAMOS SEGUIR CORRIENDO ESTO :D PARA QUE NO SE MUERAN LOS OTROS CODIGOS
 
 ndata = target2['A-A'].merge(target2['B-B'],
                              on = ['id', 'Periodo'],
